@@ -11,9 +11,13 @@ namespace jkdl.Wrappers
             var services = new ServiceCollection();
             services.AddLogging(l => l.AddConsole());
 
+            services.AddSingleton<IDownloadProgressCache, DownloadProgressCache>();
+
             services.AddTransient<IFileDownloader, FileDownloader>();
             services.AddTransient<IFileNameProvider, FileNameProvider>();
             services.AddTransient<ILinksProvider, LinksProvider>();
+            services.AddTransient<IWebClientFactory, WebClientFactory>();
+            services.AddTransient<IDownloadProgressProvider, DownloadProgressProvider>();
 
             return services.BuildServiceProvider();
         }

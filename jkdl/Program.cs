@@ -31,6 +31,8 @@ namespace jkdl
             {
                 Console.Error.WriteLine(ex.ToString());
             }
+
+            Console.ReadLine();
         }
     }
 }
