@@ -6,11 +6,12 @@ namespace jkdl.Wrappers
 {
     internal static class ServiceCollectionWrapper
     {
-        internal static IServiceProvider Create()
+        internal static IServiceProvider Create(IConfigurationService config)
         {
             var services = new ServiceCollection();
             services.AddLogging(l => l.AddConsole());
 
+            services.AddSingleton<IConfigurationService>(config);
             services.AddSingleton<IDownloadProgressCache, DownloadProgressCache>();
 
             services.AddTransient<IFileDownloader, FileDownloader>();

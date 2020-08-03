@@ -14,17 +14,17 @@ namespace jkdl
         {
             try
             {
-                var config = ConfigurationBuilderWrapper.Build(args);
-                var provider = ServiceCollectionWrapper.Create();
+                var config = new ConfigurationService(args);
+                var provider = ServiceCollectionWrapper.Create(config);
 
-                if (config.HasFilename())
+                if (config.HasFilename)
                 {
-                    await provider.GetDownloader().DownloadAsync(config.GetFilename());
+                    await provider.GetDownloader().DownloadAsync(config.GetFilename);
                 }
 
-                if (config.HasLink())
+                if (config.HasLink)
                 {
-                    await provider.GetDownloader().DownloadAsync(config.GetLink());
+                    await provider.GetDownloader().DownloadAsync(config.GetLink);
                 }
             }
             catch (Exception ex)

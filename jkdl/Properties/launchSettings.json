@@ -2,7 +2,7 @@
   "profiles": {
     "jkdl": {
       "commandName": "Project",
-      "commandLineArgs": "-f c:\\Users\\jan.kuzel\\Downloads\\watchmen.txt"
+      "commandLineArgs": "-f c:\\Users\\jan.kuzel\\Downloads\\watchmen.txt -o true"
     }
   }
 }
