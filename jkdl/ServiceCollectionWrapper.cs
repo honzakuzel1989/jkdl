@@ -2,11 +2,13 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace jkdl.Wrappers
+namespace jkdl
 {
-    internal static class ServiceCollectionWrapper
+    internal class ServiceCollectionWrapper
     {
-        internal static IServiceProvider Create(IConfigurationService config)
+        public IServiceProvider _serviceProvider { get; }
+
+        public ServiceCollectionWrapper(IConfigurationService config)
         {
             var services = new ServiceCollection();
             services.AddLogging(l => l.AddConsole());
@@ -20,10 +22,9 @@ namespace jkdl.Wrappers
             services.AddTransient<IWebClientFactory, WebClientFactory>();
             services.AddTransient<IDownloadProgressProvider, DownloadProgressProvider>();
 
-            return services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider();
         }
 
-        internal static IFileDownloader GetDownloader(this IServiceProvider serviceProvider)
-            => serviceProvider.GetRequiredService<IFileDownloader>();
+        internal IFileDownloader Downloader => _serviceProvider.GetRequiredService<IFileDownloader>();
     }
 }

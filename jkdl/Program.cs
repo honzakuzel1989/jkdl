@@ -1,5 +1,4 @@
-﻿using jkdl.Wrappers;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace jkdl
@@ -15,16 +14,16 @@ namespace jkdl
             try
             {
                 var config = new ConfigurationService(args);
-                var provider = ServiceCollectionWrapper.Create(config);
+                var provider = new ServiceCollectionWrapper(config);
 
                 if (config.HasFilename)
                 {
-                    await provider.GetDownloader().DownloadAsync(config.GetFilename);
+                    await provider.Downloader.DownloadAsync(config.GetFilename);
                 }
 
                 if (config.HasLink)
                 {
-                    await provider.GetDownloader().DownloadAsync(config.GetLink);
+                    await provider.Downloader.DownloadAsync(config.GetLink);
                 }
             }
             catch (Exception ex)
