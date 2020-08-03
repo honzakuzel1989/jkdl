@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +9,7 @@ namespace jkdl
 {
     internal class Program
     {
-        public Program()
+        protected Program()
         {
         }
 
@@ -19,22 +21,13 @@ namespace jkdl
                 return 10;
             }
 
-            var filename = args.First();
-
-            if (!File.Exists(filename))
-            {
-                Console.Error.WriteLine($"File {filename} does not exist!");
-                return 20;
-            }
+            var services = CreateServiceCollection();
+            var provider = CreateServiceProvider(services);
 
             try
             {
-                var downloader = new Downloader();
-
-                var links = await File.ReadAllLinesAsync(filename);
-                var tasks = links.Select(async link => await downloader.DownloadAsync(link));
-
-                await Task.WhenAll(tasks);
+                var downloader = provider.GetRequiredService<IFileDownloader>();
+                await downloader.DownloadAsync(new FileInfo(args.First()));
             }
             catch (Exception ex)
             {
@@ -43,6 +36,23 @@ namespace jkdl
             }
 
             return 0;
+        }
+
+        private static ServiceProvider CreateServiceProvider(ServiceCollection services)
+        {
+            return services.BuildServiceProvider();
+        }
+
+        private static ServiceCollection CreateServiceCollection()
+        {
+            var services = new ServiceCollection();
+            services.AddLogging(l => l.AddConsole());
+
+            services.AddTransient<IFileDownloader, FileDownloader>();
+            services.AddTransient<IFileNameProvider, FileNameProvider>();
+            services.AddTransient<ILinksProvider, LinksProvider>();
+
+            return services;
         }
     }
 }
