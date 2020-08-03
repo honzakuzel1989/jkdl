@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "jkdl": {
+      "commandName": "Project",
+      "commandLineArgs": "c:\\Users\\jan.kuzel\\Downloads\\watchmen.txt"
+    }
+  }
+}
