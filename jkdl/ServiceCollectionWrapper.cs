@@ -16,6 +16,7 @@ namespace jkdl
             services.AddSingleton<IConfigurationService>(config);
             services.AddSingleton<IDownloadProgressCache, DownloadProgressCache>();
             services.AddSingleton<ILinksCache, LinksCache>();
+            services.AddSingleton<ICommandPrompt, CommandPrompt>();
 
             services.AddTransient<IFileDownloader, FileDownloader>();
             services.AddTransient<IFileNameProvider, FileNameProvider>();
@@ -26,8 +27,6 @@ namespace jkdl
             _serviceProvider = services.BuildServiceProvider();
         }
 
-        internal IFileDownloader Downloader => _serviceProvider.GetRequiredService<IFileDownloader>();
-        internal ILinksCache LinksCache => _serviceProvider.GetRequiredService<ILinksCache>();
-        internal ILinksProvider LinksProvider => _serviceProvider.GetRequiredService<ILinksProvider>();
+        internal ICommandPrompt ComandPrompt => _serviceProvider.GetRequiredService<ICommandPrompt>();
     }
 }
