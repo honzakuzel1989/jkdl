@@ -77,11 +77,11 @@ namespace jkdl
                 foreach (var link in _linksCache.GetLinks(cancellationToken))
                 {
                     // Download link
-                    await DownloadAsync(link);
+                    _ = Task.Run(() => DownloadAsync(link));
 
                     // Wait for empty download slot
                     while (NUMBER_OF_DOWLOANDS > _configuration.MaxNumberOfDownload)
-                        await Task.Delay(500);
+                        await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
             }
             catch (OperationCanceledException)
