@@ -1,11 +1,10 @@
-﻿using System.IO;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace jkdl
 {
     public interface IFileDownloader
     {
-        Task DownloadAsync(string link);
-        Task DownloadAsync(FileInfo fileInfo);
+        Task Run(CancellationToken cancellationToken);
     }
 }

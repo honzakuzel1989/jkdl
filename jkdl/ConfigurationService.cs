@@ -34,8 +34,7 @@ namespace jkdl
 
         public string GetLink => _configurationRoot[LINK];
 
-        private bool HasOverwrite => !string.IsNullOrWhiteSpace(_configurationRoot[OVERWRITE]);
-
-        public bool Overwrite => HasOverwrite && bool.Parse(_configurationRoot[OVERWRITE]);
+        public bool OverwriteResult => true;
+        public int MaxNumberOfDownload => 5;
     }
 }

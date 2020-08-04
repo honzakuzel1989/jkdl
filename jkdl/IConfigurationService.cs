@@ -2,6 +2,7 @@
 {
     public interface IConfigurationService
     {
-        public bool Overwrite { get; }
+        public int MaxNumberOfDownload { get; }
+        public bool OverwriteResult { get; }
     }
 }

@@ -1,8 +1,7 @@
 {
   "profiles": {
     "jkdl": {
-      "commandName": "Project",
-      "commandLineArgs": "-o true"
+      "commandName": "Project"
     }
   }
 }

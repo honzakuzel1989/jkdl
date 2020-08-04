@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace jkdl
@@ -16,36 +18,40 @@ namespace jkdl
                 var config = new ConfigurationService(args);
                 var provider = new ServiceCollectionWrapper(config);
 
-                if (config.HasFilename)
+                var cts = new CancellationTokenSource();
+                _ = Task.Run(() => provider.Downloader.Run(cts.Token));
+
+                var cmd = string.Empty;
+                while (!cts.IsCancellationRequested)
                 {
-                    await provider.Downloader.DownloadAsync(config.GetFilename);
-                }
-                else if (config.HasLink)
-                {
-                    await provider.Downloader.DownloadAsync(config.GetLink);
-                }
-                else
-                {
-                    var line = string.Empty;
-                    while ((line = Console.ReadLine().Trim()) != string.Empty)
+                    Console.Write("> ");
+                    cmd = Console.ReadLine();
+                    switch (cmd)
                     {
-                        try
-                        {
-                            await provider.Downloader.DownloadAsync(line);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.Error.WriteLine(ex.ToString());
-                        }
+                        case "exit": 
+                            cts.Cancel();
+                            break;
+                        case "link":
+                            Console.Write("> ");
+                            var link = Console.ReadLine();
+                            provider.LinksCache.AddLink(link);
+                            break;
+                        case "file":
+                            Console.Write("> ");
+                            var filename = Console.ReadLine();
+                            foreach(var flink in await provider.LinksProvider.GetLinks(new FileInfo(filename)))
+                                provider.LinksCache.AddLink(flink);
+                            break;
                     }
                 }
+
+                Console.WriteLine("Press [Enter] to exit...");
+                Console.ReadLine();
             }
             catch (Exception ex)
             {
                 Console.Error.WriteLine(ex.ToString());
             }
-
-            Console.ReadLine();
         }
     }
 }
