@@ -20,10 +20,24 @@ namespace jkdl
                 {
                     await provider.Downloader.DownloadAsync(config.GetFilename);
                 }
-
-                if (config.HasLink)
+                else if (config.HasLink)
                 {
                     await provider.Downloader.DownloadAsync(config.GetLink);
+                }
+                else
+                {
+                    var line = string.Empty;
+                    while ((line = Console.ReadLine().Trim()) != string.Empty)
+                    {
+                        try
+                        {
+                            await provider.Downloader.DownloadAsync(line);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.Error.WriteLine(ex.ToString());
+                        }
+                    }
                 }
             }
             catch (Exception ex)
