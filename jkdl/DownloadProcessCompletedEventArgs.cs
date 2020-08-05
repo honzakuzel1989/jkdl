@@ -9,7 +9,9 @@ namespace jkdl
 
         public DownloadProcessCompletedEventArgs(AsyncCompletedEventArgs e, DownloadProcessInfo info)
         {
-            Info = new DownloadProcessInfo(info.Link, 
+            Info = new DownloadProcessInfo(
+                info.Key,
+                info.Link, 
                 info.Filename,
                 info.BytesReceived,
                 info.TotalBytesToReceive,

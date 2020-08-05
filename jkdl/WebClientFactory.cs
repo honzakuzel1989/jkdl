@@ -6,16 +6,20 @@ namespace jkdl
     {
         private readonly ILogger<WebClientFactory> _logger;
         private readonly IDownloadProgressCache _downloadProgressCache;
+        private readonly IConfigurationService _configurationService;
 
-        public WebClientFactory(ILogger<WebClientFactory> logger, IDownloadProgressCache downloadProgressCache)
+        public WebClientFactory(ILogger<WebClientFactory> logger, 
+            IDownloadProgressCache downloadProgressCache,
+            IConfigurationService configurationService)
         {
             _logger = logger;
             _downloadProgressCache = downloadProgressCache;
+            _configurationService = configurationService;
         }
 
-        public IWebClient CreateWebClient(string link, string filename)
+        public IWebClient CreateWebClient(DownloadProcessInfo info)
         {
-            return new WebClient(link, filename, _downloadProgressCache);
+            return new WebClient(info.Key, _downloadProgressCache, _configurationService);
         }
     }
 }

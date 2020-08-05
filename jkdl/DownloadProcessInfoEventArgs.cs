@@ -8,10 +8,12 @@ namespace jkdl
     {
         public DownloadProcessInfo Info { get; }
 
-        public DownloadProcessInfoEventArgs(DownloadProgressChangedEventArgs e, string link, string filename)
+        public DownloadProcessInfoEventArgs(DownloadProgressChangedEventArgs e, DownloadProcessInfo info)
         {
-            Info = new DownloadProcessInfo(link, 
-                filename, 
+            Info = new DownloadProcessInfo(
+                info.Key,
+                info.Link, 
+                info.Filename, 
                 e.BytesReceived, 
                 e.TotalBytesToReceive, 
                 e.ProgressPercentage,

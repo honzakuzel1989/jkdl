@@ -11,15 +11,19 @@ namespace jkdl
 
         private readonly object _progressLock = new object();
 
-        private readonly string _link;
-        private readonly string _filename;
-        private readonly IDownloadProgressCache _progressCache;
+        private readonly string _processKey;
 
-        public WebClient(string link, string filename, IDownloadProgressCache progressCache)
+        private readonly IDownloadProgressCache _progressCache;
+        private readonly IConfigurationService _configurationService;
+
+        public WebClient(string processKey, 
+            IDownloadProgressCache progressCache,
+            IConfigurationService configurationService)
         {
-            _link = link;
-            _filename = filename;
+            _processKey = processKey;
+            
             _progressCache = progressCache;
+            _configurationService = configurationService;
 
             DownloadProgressChanged += WebClientWrapper_DownloadProgressChanged;
             DownloadFileCompleted += WebClient_DownloadFileCompleted;
@@ -29,10 +33,10 @@ namespace jkdl
         {
             lock (_progressLock)
             {
-                if (_progressCache.TryGetValue(_filename, out var info))
+                if (_progressCache.TryGetValue(_processKey, out var info))
                 {
                     var eacompleted = new DownloadProcessCompletedEventArgs(e, info);
-                    _progressCache[_filename] = eacompleted.Info;
+                    _progressCache[_processKey] = eacompleted.Info;
                     OnDownloadProgressCompleted?.Invoke(this, eacompleted);
                 }
             }
@@ -42,11 +46,11 @@ namespace jkdl
         {
             lock (_progressLock)
             {
-                if (_progressCache.TryGetValue(_filename, out var info) &&
-                    e.ProgressPercentage > info.ProgressPercentage)
+                if (_progressCache.TryGetValue(_processKey, out var info) &&
+                    e.ProgressPercentage - info.ProgressPercentage >= _configurationService.DownloadProgressThrash)
                 {
-                    var eainfo = new DownloadProcessInfoEventArgs(e, _link, _filename);
-                    _progressCache[_filename] = eainfo.Info;
+                    var eainfo = new DownloadProcessInfoEventArgs(e, info);
+                    _progressCache[_processKey] = eainfo.Info;
                     OnDownloadProgressInfoChanged?.Invoke(this, eainfo);
                 }
             }

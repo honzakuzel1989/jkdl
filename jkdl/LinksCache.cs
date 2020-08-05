@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
@@ -25,10 +26,12 @@ namespace jkdl
 
         public void Add(string link, CancellationToken cancellationToken)
         {
-            var filename = _outputFileNameProvider.GetAbsoluteFileName(link);
-            var info = new DownloadProcessInfo(link, filename);
+            var guid = Guid.NewGuid().ToString();
 
-            _downloadProgressCache[filename] = info;
+            var filename = _outputFileNameProvider.GetAbsoluteFileName(link);
+            var info = new DownloadProcessInfo(guid, link, filename);
+
+            _downloadProgressCache[guid] = info;
             _linksCache.Add(info, cancellationToken);
 
             _logger.LogInformation($"Inserted new link {link}.");
