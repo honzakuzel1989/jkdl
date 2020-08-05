@@ -33,7 +33,7 @@ namespace jkdl
                 {
                     var eacompleted = new DownloadProcessCompletedEventArgs(e, info);
                     _progressCache[_filename] = eacompleted.Info;
-                    OnDownloadProgressCompleted?.Invoke(this, new DownloadProcessCompletedEventArgs(e, eacompleted.Info));
+                    OnDownloadProgressCompleted?.Invoke(this, eacompleted);
                 }
             }
         }
