@@ -4,7 +4,8 @@ namespace jkdl
 {
     public interface IDownloadProgressProvider
     {
-        Task ReportStatistics();
+        Task ReportProgress();
         Task ReportHistory();
+        Task ReportStatistics();
     }
 }

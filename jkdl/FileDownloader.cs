@@ -11,27 +11,30 @@ namespace jkdl
         private volatile int NUMBER_OF_DOWLOANDS = 0;
 
         private readonly ILogger<FileDownloader> _logger;
-        private readonly IFileNameProvider _fileNameProvider;
+        private readonly IOutputFileNameProvider _ofileNameProvider;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
         private readonly IWebClientFactory _webClientFactory;
         private readonly IConfigurationService _configuration;
         private readonly ILinksCache _linksCache;
+        private readonly ITextProvider _textProvider;
         private readonly ILinksProvider _linksProvider;
 
         public FileDownloader(ILogger<FileDownloader> logger,
             ILinksProvider linksProvider,
-            IFileNameProvider fileNameProvider,
+            IOutputFileNameProvider ofileNameProvider,
             IDownloadProgressProvider downloadProgressProvider,
             IWebClientFactory webClientFactory,
             IConfigurationService configuration,
-            ILinksCache linksCache)
+            ILinksCache linksCache,
+            ITextProvider textProvider)
         {
             _logger = logger;
-            _fileNameProvider = fileNameProvider;
+            _ofileNameProvider = ofileNameProvider;
             _downloadProgressProvider = downloadProgressProvider;
             _webClientFactory = webClientFactory;
             _configuration = configuration;
             _linksCache = linksCache;
+            _textProvider = textProvider;
             _linksProvider = linksProvider;
         }
 
@@ -42,23 +45,25 @@ namespace jkdl
             try
             {
                 _logger.LogInformation($"Downloading data from link: {link}");
-                var filename = _fileNameProvider.GetFileName(link);
+                var ofilename = _ofileNameProvider.GetAbsoluteFileName(link);
 
-                if (!File.Exists(filename) || (File.Exists(filename) && _configuration.OverwriteResult))
+                if (!File.Exists(ofilename) || (File.Exists(ofilename) && _configuration.OverwriteResult))
                 {
-                    using var client = _webClientFactory.CreateWebClient(link, filename);
-                    await client.DownloadFileTaskAsync(link, filename);
+                    using var client = _webClientFactory.CreateWebClient(link, ofilename);
+                    await client.DownloadFileTaskAsync(link, ofilename);
 
-                    _logger.LogInformation($"File {filename} successfully downloaded");
+                    _logger.LogInformation($"File {ofilename} successfully downloaded");
                 }
                 else
                 {
-                    _logger.LogWarning($"File {filename} already exists!");
+                    _logger.LogWarning($"File {ofilename} already exists!");
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
+                _textProvider.Writer.WriteLine($"Error: {ex.Message}");
+
             }
             finally
             {

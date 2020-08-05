@@ -24,7 +24,7 @@ namespace jkdl
             _textProvider = textProvider;
         }
 
-        public async Task ReportStatistics()
+        public async Task ReportProgress()
         {
             bool empty = true;
 
@@ -39,7 +39,7 @@ namespace jkdl
 
             if (empty)
             {
-                Writer.WriteLine("No statistics yet...");
+                Writer.WriteLine("\tNo current download...");
             }
         }
 
@@ -58,8 +58,38 @@ namespace jkdl
 
             if (empty)
             {
-                Writer.WriteLine("No history yet...");
+                Writer.WriteLine("\tNo history yet...");
             }
+        }
+
+        public async Task ReportStatistics()
+        {
+            var active = 0;
+            var downloaded = 0;
+            var downloadedSize = (long)0;
+            var cancelled = 0;
+
+            foreach (var info in _downloadProgressCache.Values)
+            {
+                if (info.Completed)
+                {
+                    if (info.Cancelled)
+                    {
+                        cancelled++;
+                    }
+                    else
+                    {
+                        downloaded++;
+                        downloadedSize += info.BytesReceived / MBMULT;
+                    }
+                }
+                else
+                {
+                    active++;
+                }
+            }
+
+            await Writer.WriteLineAsync($"\tActive: {active}\n\tDownloaded: {downloaded}\n\tSize: {downloadedSize} [{MB}]\n\tCancelled:{cancelled}");
         }
     }
 }

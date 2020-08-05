@@ -19,8 +19,8 @@ namespace jkdl
             services.AddSingleton<ICommandPrompt, CommandPrompt>();
             services.AddSingleton<ITextProvider, ConsoleTextProvider>();
 
+            services.AddTransient<IOutputFileNameProvider, OutputFileNameProvider>();
             services.AddTransient<IFileDownloader, FileDownloader>();
-            services.AddTransient<IFileNameProvider, FileNameProvider>();
             services.AddTransient<ILinksProvider, LinksProvider>();
             services.AddTransient<IWebClientFactory, WebClientFactory>();
             services.AddTransient<IDownloadProgressProvider, DownloadProgressProvider>();

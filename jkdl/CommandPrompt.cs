@@ -48,16 +48,19 @@ namespace jkdl
                         cts.Cancel();
                         break;
                     case "link":
-                        Writer.Write("Insert link to download...");
+                        Writer.Write("link: ");
                         var link = Reader.ReadLine();
                         _linksCache.AddLink(link, cts.Token);
                         break;
                     case "file":
-                        Writer.Write("Insert filename with links to download...");
+                        Writer.Write("filename: ");
                         var filename = Reader.ReadLine();
                         var flinks = await _linksProvider.GetLinks(new FileInfo(filename));
                         foreach (var flink in flinks)
                             _linksCache.AddLink(flink, cts.Token);
+                        break;
+                    case "progress":
+                        await _downloadProgressProvider.ReportProgress();
                         break;
                     case "stats":
                         await _downloadProgressProvider.ReportStatistics();
@@ -68,6 +71,9 @@ namespace jkdl
                     case "":
                         Writer.WriteLine($"Print {Guid.NewGuid():N} for available commands...");
                         break;
+                    case "help":
+                        PrintHelp();
+                        break;
                     default:
                         Writer.WriteLine($"Unknown command '{cmd}'...");
                         PrintAvailableCommands();
@@ -76,14 +82,20 @@ namespace jkdl
             }
         }
 
+        private void PrintHelp()
+        {
+            PrintAvailableCommands();
+        }
+
         private void PrintAvailableCommands()
         {
             Writer.WriteLine("AvailableCommands:");
-            Writer.WriteLine($"\tlink -\tinsert link into the cache to download");
-            Writer.WriteLine($"\tfile -\tinsert filename with links into the cache to download");
-            Writer.WriteLine($"\tstats -\tprint download statistics");
-            Writer.WriteLine($"\thistory -\tprint download history");
-            Writer.WriteLine($"\texit -\texit the application");
+            Writer.WriteLine($"\tlink - insert link into the cache to download");
+            Writer.WriteLine($"\tfile - insert filename with links into the cache to download");
+            Writer.WriteLine($"\tprogress - print download progress");
+            Writer.WriteLine($"\tstats - print download statistics");
+            Writer.WriteLine($"\thistory - print download history");
+            Writer.WriteLine($"\texit - exit the application");
         }
     }
 }
