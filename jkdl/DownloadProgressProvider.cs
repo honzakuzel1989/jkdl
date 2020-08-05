@@ -27,6 +27,7 @@ namespace jkdl
 
         public async Task ReportProgress()
         {
+            int counter = 0;
             bool cacheWasEmpty = true;
 
             foreach (var info in _downloadProgressCache.Values)
@@ -34,8 +35,8 @@ namespace jkdl
                 if (!info.Completed)
                 {
                     await Writer.WriteLineAsync($"" +
-                        $"\t{info.Filename} {(!info.Running ? " - waiting" : string.Empty)}" +
-                        $"\n\t{info.ProgressPercentage} [%] ({info.Duration})" +
+                        $"\t[{++counter}] {info.Filename} {(!info.Running ? " - waiting" : string.Empty)}" +
+                        $"\n\t{info.ProgressPercentage} [%] ({info.CalculateDuration()})" +
                         $"\n\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
 
                     cacheWasEmpty = false;
@@ -50,6 +51,7 @@ namespace jkdl
 
         public async Task ReportHistory()
         {
+            int counter = 0;
             bool cacheWasEmpty = true;
 
             foreach (var info in _downloadProgressCache.Values)
@@ -61,8 +63,8 @@ namespace jkdl
                     if (info.Failed) result = "Failed";
 
                     await Writer.WriteLineAsync(
-                        $"\t{info.Filename}" +
-                        $"\n\t{info.StartTime} - {info.EndTime} [{info.Duration}]" +
+                        $"\t[{++counter}] {info.Filename}" +
+                        $"\n\t{info.StartTime} - {info.EndTime} [{info.CalculateDuration()}]" +
                         $"\n\t{info.ProgressPercentage} [%]\t{result}");
 
                     cacheWasEmpty = false;
@@ -101,7 +103,7 @@ namespace jkdl
                     {
                         downloaded++;
                         downloadedSize += info.BytesReceived / MBMULT;
-                        downloadedTime += info.Duration;
+                        downloadedTime += info.CalculateDuration();
                     }
                 }
                 else

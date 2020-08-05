@@ -44,6 +44,24 @@ namespace jkdl
         public bool Cancelled { get; }
         public bool Failed { get; }
         public Exception Error { get; }
-        public TimeSpan Duration => EndTime > StartTime ? EndTime.Subtract(StartTime) : DateTime.Now.Subtract(StartTime);
+
+        public TimeSpan CalculateDuration()
+        {
+            if (EndTime > StartTime)
+            {
+                return EndTime.Subtract(StartTime);
+            }
+            else
+            {
+                if (Running)
+                {
+                    return DateTime.Now.Subtract(StartTime);
+                }
+                else
+                {
+                    return TimeSpan.Zero;
+                }
+            }
+        }
     }
 }

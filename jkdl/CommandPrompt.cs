@@ -38,18 +38,14 @@ namespace jkdl
         {
             _ = Task.Run(() => _fileDownloader.Run(cts.Token));
 
-            var cmd = string.Empty;
+            var line = string.Empty;
             while (!cts.IsCancellationRequested)
             {
-                cmd = Reader.ReadLine();
-                switch (cmd)
+                line = Reader.ReadLine();
+                switch (line)
                 {
                     case "exit":
                         cts.Cancel();
-                        break;
-                    case "link":
-                        var link = Reader.ReadLine();
-                        _linksCache.Add(link, cts.Token);
                         break;
                     case "file":
                         var filename = Reader.ReadLine();
@@ -73,8 +69,7 @@ namespace jkdl
                         PrintHelp();
                         break;
                     default:
-                        Writer.WriteLine($"Unknown command '{cmd}'...");
-                        PrintAvailableCommands();
+                        _linksCache.Add(line, cts.Token);
                         break;
                 }
             }
@@ -87,13 +82,13 @@ namespace jkdl
 
         private void PrintAvailableCommands()
         {
-            Writer.WriteLine("AvailableCommands:");
-            Writer.WriteLine($"\tlink - insert link into the cache to download");
+            Writer.WriteLine("Available commands:");
             Writer.WriteLine($"\tfile - insert filename with links into the cache to download");
             Writer.WriteLine($"\tprogress - print download progress");
             Writer.WriteLine($"\tstats - print download statistics");
             Writer.WriteLine($"\thistory - print download history");
             Writer.WriteLine($"\texit - exit the application");
+            Writer.WriteLine($"\thelp - exit the application");
         }
     }
 }
