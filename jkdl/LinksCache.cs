@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -7,10 +8,17 @@ namespace jkdl
     internal class LinksCache : ILinksCache
     {
         private readonly BlockingCollection<string> _cache = new BlockingCollection<string>();
+        private readonly ILogger<LinksCache> _logger;
 
-        public void AddLink(string link)
+        public LinksCache(ILogger<LinksCache> logger)
         {
-            _cache.Add(link);
+            _logger = logger;
+        }
+
+        public void AddLink(string link, CancellationToken cancellationToken)
+        {
+            _cache.Add(link, cancellationToken);
+            _logger.LogInformation($"Inserted new link {link}.");
         }
 
         public IEnumerable<string> GetLinks(CancellationToken cancellationToken)

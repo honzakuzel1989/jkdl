@@ -18,8 +18,8 @@ namespace jkdl
 
                 await provider.ComandPrompt.RunAsync(Console.In, Console.Out);
 
-                Console.WriteLine("Press [Enter] to exit...");
-                Console.ReadLine();
+                Console.Out.WriteLine("Press [Enter] to exit...");
+                Console.In.ReadLine();
             }
             catch (Exception ex)
             {

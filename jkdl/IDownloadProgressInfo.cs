@@ -1,7 +1,11 @@
-﻿namespace jkdl
+﻿using System.IO;
+using System.Threading.Tasks;
+
+namespace jkdl
 {
     public interface IDownloadProgressProvider
     {
-        void DownloadProgressChanged(object sender, DownloadProcessInfoEventArgs e);
+        Task ReportStatistics(TextWriter writer);
+        Task ReportHistory(TextWriter writer);
     }
 }

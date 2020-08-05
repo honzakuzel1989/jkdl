@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace jkdl
 {
@@ -13,6 +14,8 @@ namespace jkdl
             get => _cache[filename];
             set => _cache[filename] = value;
         }
+
+        public IEnumerable<DownloadProcessInfo> Values => _cache.Values;
 
         public DownloadProgressCache(ILogger<DownloadProgressCache> logger)
         {

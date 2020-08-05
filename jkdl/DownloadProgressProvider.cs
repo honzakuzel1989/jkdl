@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace jkdl
 {
@@ -8,15 +10,50 @@ namespace jkdl
         const string MB = "MB";
 
         private readonly ILogger<DownloadProgressProvider> _logger;
+        private readonly IDownloadProgressCache _downloadProgressCache;
 
-        public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger)
+        public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger, IDownloadProgressCache downloadProgressCache)
         {
             _logger = logger;
+            _downloadProgressCache = downloadProgressCache;
         }
 
-        public void DownloadProgressChanged(object sender, DownloadProcessInfoEventArgs e)
+        public async Task ReportStatistics(TextWriter writer)
         {
-            _logger.LogInformation($"\t{e.Info.Filename}\n\t\t{e.Info.ProgressPercentage} [%]\t{e.Info.BytesReceived / MBMULT}/{e.Info.TotalBytesToReceive / MBMULT} [{MB}]");
+            bool empty = true;
+
+            foreach (var info in _downloadProgressCache.Values)
+            {
+                if (!info.Completed)
+                {
+                    await writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
+                    empty = false;
+                }
+            }
+
+            if (empty)
+            {
+                writer.WriteLine("No statistics yet...");
+            }
+        }
+
+        public async Task ReportHistory(TextWriter writer)
+        {
+            bool empty = true;
+
+            foreach (var info in _downloadProgressCache.Values)
+            {
+                if (info.Completed)
+                {
+                    await writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{(info.Cancelled ? "Cancelled" : "Ok")}");
+                    empty = false;
+                }
+            }
+
+            if (empty)
+            {
+                writer.WriteLine("No history yet...");
+            }
         }
     }
 }

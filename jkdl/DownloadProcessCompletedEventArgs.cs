@@ -15,7 +15,8 @@ namespace jkdl
                 info.TotalBytesToReceive,
                 info.ProgressPercentage,
                 e.Cancelled,
-                e.Error);
+                e.Error,
+                completed: true);
         }
     }
 }

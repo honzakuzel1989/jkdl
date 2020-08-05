@@ -11,7 +11,7 @@ namespace jkdl
         public ServiceCollectionWrapper(IConfigurationService config)
         {
             var services = new ServiceCollection();
-            services.AddLogging(l => l.AddDebug());
+            services.AddLogging(l => l.AddConsole());
 
             services.AddSingleton<IConfigurationService>(config);
             services.AddSingleton<IDownloadProgressCache, DownloadProgressCache>();

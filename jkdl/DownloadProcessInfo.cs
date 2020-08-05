@@ -13,13 +13,15 @@ namespace jkdl
             ProgressPercentage = progressPercentage;
         }
 
-        public DownloadProcessInfo(string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool cancelled, Exception error) 
+        public DownloadProcessInfo(string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool cancelled, Exception error, bool completed) 
             : this(link, filename, bytesReceived, totalBytesToReceive, progressPercentage)
         {
+            Completed = completed;
             Cancelled = cancelled;
             Error = error;
         }
 
+        public bool Completed { get; }
         public string Link { get; }
         public string Filename { get; }
         public long BytesReceived { get; }
