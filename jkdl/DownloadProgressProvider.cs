@@ -11,14 +11,20 @@ namespace jkdl
 
         private readonly ILogger<DownloadProgressProvider> _logger;
         private readonly IDownloadProgressCache _downloadProgressCache;
+        private readonly ITextProvider _textProvider;
 
-        public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger, IDownloadProgressCache downloadProgressCache)
+        private TextWriter Writer => _textProvider.Writer;
+
+        public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger, 
+            IDownloadProgressCache downloadProgressCache,
+            ITextProvider textProvider)
         {
             _logger = logger;
             _downloadProgressCache = downloadProgressCache;
+            _textProvider = textProvider;
         }
 
-        public async Task ReportStatistics(TextWriter writer)
+        public async Task ReportStatistics()
         {
             bool empty = true;
 
@@ -26,18 +32,18 @@ namespace jkdl
             {
                 if (!info.Completed)
                 {
-                    await writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
+                    await Writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
                     empty = false;
                 }
             }
 
             if (empty)
             {
-                writer.WriteLine("No statistics yet...");
+                Writer.WriteLine("No statistics yet...");
             }
         }
 
-        public async Task ReportHistory(TextWriter writer)
+        public async Task ReportHistory()
         {
             bool empty = true;
 
@@ -45,14 +51,14 @@ namespace jkdl
             {
                 if (info.Completed)
                 {
-                    await writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{(info.Cancelled ? "Cancelled" : "Ok")}");
+                    await Writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{(info.Cancelled ? "Cancelled" : "Ok")}");
                     empty = false;
                 }
             }
 
             if (empty)
             {
-                writer.WriteLine("No history yet...");
+                Writer.WriteLine("No history yet...");
             }
         }
     }

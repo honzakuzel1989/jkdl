@@ -11,12 +11,13 @@ namespace jkdl
         public ServiceCollectionWrapper(IConfigurationService config)
         {
             var services = new ServiceCollection();
-            services.AddLogging(l => l.AddConsole());
+            services.AddLogging(l => l.AddDebug());
 
             services.AddSingleton<IConfigurationService>(config);
             services.AddSingleton<IDownloadProgressCache, DownloadProgressCache>();
             services.AddSingleton<ILinksCache, LinksCache>();
             services.AddSingleton<ICommandPrompt, CommandPrompt>();
+            services.AddSingleton<ITextProvider, ConsoleTextProvider>();
 
             services.AddTransient<IFileDownloader, FileDownloader>();
             services.AddTransient<IFileNameProvider, FileNameProvider>();

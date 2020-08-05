@@ -16,7 +16,7 @@ namespace jkdl
                 var config = new ConfigurationService(args);
                 var provider = new ServiceCollectionWrapper(config);
 
-                await provider.ComandPrompt.RunAsync(Console.In, Console.Out);
+                await provider.ComandPrompt.RunAsync();
 
                 Console.Out.WriteLine("Press [Enter] to exit...");
                 Console.In.ReadLine();

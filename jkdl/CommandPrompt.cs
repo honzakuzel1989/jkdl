@@ -13,71 +13,77 @@ namespace jkdl
         private readonly ILinksProvider _linksProvider;
         private readonly IFileDownloader _fileDownloader;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
+        private readonly ITextProvider _textProvider;
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
+
+        private TextReader Reader => _textProvider.Reader;
+        private TextWriter Writer => _textProvider.Writer;
 
         public CommandPrompt(ILogger<CommandPrompt> logger,
             ILinksCache linksCache,
             ILinksProvider linksProvider,
             IFileDownloader fileDownloader,
-            IDownloadProgressProvider downloadProgressProvider)
+            IDownloadProgressProvider downloadProgressProvider,
+            ITextProvider textProvider)
         {
             _logger = logger;
             _linksCache = linksCache;
             _linksProvider = linksProvider;
             _fileDownloader = fileDownloader;
             _downloadProgressProvider = downloadProgressProvider;
+            _textProvider = textProvider;
         }
 
-        public async Task RunAsync(TextReader reader, TextWriter writer)
+        public async Task RunAsync()
         {
             _ = Task.Run(() => _fileDownloader.Run(cts.Token));
 
             var cmd = string.Empty;
             while (!cts.IsCancellationRequested)
             {
-                cmd = reader.ReadLine();
+                cmd = Reader.ReadLine();
                 switch (cmd)
                 {
                     case "exit":
                         cts.Cancel();
                         break;
                     case "link":
-                        writer.Write("Insert link to download...");
-                        var link = reader.ReadLine();
+                        Writer.Write("Insert link to download...");
+                        var link = Reader.ReadLine();
                         _linksCache.AddLink(link, cts.Token);
                         break;
                     case "file":
-                        writer.Write("Insert filename with links to download...");
-                        var filename = reader.ReadLine();
+                        Writer.Write("Insert filename with links to download...");
+                        var filename = Reader.ReadLine();
                         var flinks = await _linksProvider.GetLinks(new FileInfo(filename));
                         foreach (var flink in flinks)
                             _linksCache.AddLink(flink, cts.Token);
                         break;
                     case "stats":
-                        await _downloadProgressProvider.ReportStatistics(writer);
+                        await _downloadProgressProvider.ReportStatistics();
                         break;
                     case "history":
-                        await _downloadProgressProvider.ReportHistory(writer);
+                        await _downloadProgressProvider.ReportHistory();
                         break;
                     case "":
-                        writer.WriteLine($"Print {Guid.NewGuid():N} for available commands...");
+                        Writer.WriteLine($"Print {Guid.NewGuid():N} for available commands...");
                         break;
                     default:
-                        writer.WriteLine($"Unknown command '{cmd}'...");
-                        PrintAvailableCommands(writer);
+                        Writer.WriteLine($"Unknown command '{cmd}'...");
+                        PrintAvailableCommands();
                         break;
                 }
             }
         }
 
-        private void PrintAvailableCommands(TextWriter writer)
+        private void PrintAvailableCommands()
         {
-            writer.WriteLine("AvailableCommands:");
-            writer.WriteLine($"\tlink -\tinsert link into the cache to download");
-            writer.WriteLine($"\tfile -\tinsert filename with links into the cache to download");
-            writer.WriteLine($"\tstats -\tprint download statistics");
-            writer.WriteLine($"\thistory -\tprint download history");
-            writer.WriteLine($"\texit -\texit the application");
+            Writer.WriteLine("AvailableCommands:");
+            Writer.WriteLine($"\tlink -\tinsert link into the cache to download");
+            Writer.WriteLine($"\tfile -\tinsert filename with links into the cache to download");
+            Writer.WriteLine($"\tstats -\tprint download statistics");
+            Writer.WriteLine($"\thistory -\tprint download history");
+            Writer.WriteLine($"\texit -\texit the application");
         }
     }
 }
