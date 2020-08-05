@@ -8,8 +8,6 @@ namespace jkdl
 {
     internal class FileDownloader : IFileDownloader
     {
-        private volatile int NUMBER_OF_DOWLOANDS = 0;
-
         private readonly ILogger<FileDownloader> _logger;
         private readonly IOutputFileNameProvider _ofileNameProvider;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
@@ -40,8 +38,6 @@ namespace jkdl
 
         public async Task DownloadAsync(string link)
         {
-            NUMBER_OF_DOWLOANDS++;
-
             try
             {
                 _logger.LogInformation($"Downloading data from link: {link}");
@@ -65,10 +61,6 @@ namespace jkdl
                 _textProvider.Writer.WriteLine($"Error: {ex.Message}");
 
             }
-            finally
-            {
-                NUMBER_OF_DOWLOANDS--;
-            }
         }
 
         public async Task Run(CancellationToken cancellationToken)
@@ -78,14 +70,17 @@ namespace jkdl
                 _logger.LogInformation("Downloader started...");
 
                 // Get link from blocking collection
+                var numberOfDownloads = 0;
                 foreach (var link in _linksCache.GetLinks(cancellationToken))
                 {
-                    // Download link
-                    _ = Task.Run(() => DownloadAsync(link));
+                    // Download link - at least one
+                    numberOfDownloads++;
+                    _ = Task.Run(async () => await DownloadAsync(link))
+                        .ContinueWith(_ => numberOfDownloads--);
 
                     // Wait for empty download slot
-                    while (NUMBER_OF_DOWLOANDS > _configuration.MaxNumberOfDownload)
-                        await Task.Delay(TimeSpan.FromMilliseconds(500));
+                    while (numberOfDownloads >= _configuration.MaxNumberOfDownload)
+                        await Task.Delay(TimeSpan.FromMilliseconds(1000));
                 }
             }
             catch (OperationCanceledException)
