@@ -6,7 +6,7 @@ namespace jkdl
     public interface ILinksCache
     {
         int Count { get; }
-        void AddLink(string link, CancellationToken cancellationToken);
-        IEnumerable<string> GetLinks(CancellationToken cancellationToken);
+        void Add(string link, CancellationToken cancellationToken);
+        IEnumerable<DownloadProcessInfo> Get(CancellationToken cancellationToken);
     }
 }

@@ -14,7 +14,8 @@ namespace jkdl
                 filename, 
                 e.BytesReceived, 
                 e.TotalBytesToReceive, 
-                e.ProgressPercentage);
+                e.ProgressPercentage,
+                running: true);
         }
     }
 }

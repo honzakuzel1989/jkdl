@@ -7,25 +7,36 @@ namespace jkdl
 {
     internal class LinksCache : ILinksCache
     {
-        private readonly BlockingCollection<string> _cache = new BlockingCollection<string>();
+        private readonly BlockingCollection<DownloadProcessInfo> _linksCache = new BlockingCollection<DownloadProcessInfo>();
         private readonly ILogger<LinksCache> _logger;
+        private readonly IDownloadProgressCache _downloadProgressCache;
+        private readonly IOutputFileNameProvider _outputFileNameProvider;
 
-        public int Count => _cache.Count;
+        public int Count => _linksCache.Count;
 
-        public LinksCache(ILogger<LinksCache> logger)
+        public LinksCache(ILogger<LinksCache> logger,
+            IDownloadProgressCache downloadProgressCache,
+            IOutputFileNameProvider outputFileNameProvider)
         {
             _logger = logger;
+            _downloadProgressCache = downloadProgressCache;
+            _outputFileNameProvider = outputFileNameProvider;
         }
 
-        public void AddLink(string link, CancellationToken cancellationToken)
+        public void Add(string link, CancellationToken cancellationToken)
         {
-            _cache.Add(link, cancellationToken);
+            var filename = _outputFileNameProvider.GetAbsoluteFileName(link);
+            var info = new DownloadProcessInfo(link, filename);
+
+            _downloadProgressCache[filename] = info;
+            _linksCache.Add(info, cancellationToken);
+
             _logger.LogInformation($"Inserted new link {link}.");
         }
 
-        public IEnumerable<string> GetLinks(CancellationToken cancellationToken)
+        public IEnumerable<DownloadProcessInfo> Get(CancellationToken cancellationToken)
         {
-            return _cache.GetConsumingEnumerable(cancellationToken);
+            return _linksCache.GetConsumingEnumerable(cancellationToken);
         }
     }
 }

@@ -11,19 +11,16 @@ namespace jkdl
 
         private readonly ILogger<DownloadProgressProvider> _logger;
         private readonly IDownloadProgressCache _downloadProgressCache;
-        private readonly ILinksCache _linksCache;
         private readonly ITextProvider _textProvider;
 
         private TextWriter Writer => _textProvider.Writer;
 
-        public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger, 
+        public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger,
             IDownloadProgressCache downloadProgressCache,
-            ILinksCache linksCache,
             ITextProvider textProvider)
         {
             _logger = logger;
             _downloadProgressCache = downloadProgressCache;
-            _linksCache = linksCache;
             _textProvider = textProvider;
         }
 
@@ -54,7 +51,11 @@ namespace jkdl
             {
                 if (info.Completed)
                 {
-                    await Writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{(info.Cancelled ? "Cancelled" : "Ok")}");
+                    string result = "Ok";
+                    if (info.Cancelled) result = "Cancelled";
+                    if (info.Failed) result = "Failed";
+
+                    await Writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{result}");
                     empty = false;
                 }
             }
@@ -71,7 +72,8 @@ namespace jkdl
             var downloaded = 0;
             var downloadedSize = (long)0;
             var cancelled = 0;
-            var waiting = _linksCache.Count;
+            var waiting = 0;
+            var failed = 0;
 
             foreach (var info in _downloadProgressCache.Values)
             {
@@ -81,6 +83,10 @@ namespace jkdl
                     {
                         cancelled++;
                     }
+                    else if (info.Failed)
+                    {
+                        failed++;
+                    }
                     else
                     {
                         downloaded++;
@@ -89,7 +95,14 @@ namespace jkdl
                 }
                 else
                 {
-                    active++;
+                    if (info.Running)
+                    {
+                        active++;
+                    }
+                    else
+                    {
+                        waiting++;
+                    }
                 }
             }
 
@@ -98,6 +111,7 @@ namespace jkdl
                 $"Downloaded: {downloaded}\n\t" +
                 $"Downloaded size: {downloadedSize} [{MB}]\n\t" +
                 $"Waiting: {waiting}\n\t" +
+                $"Failed: {failed}\n\t" +
                 $"Cancelled: {cancelled}");
         }
     }

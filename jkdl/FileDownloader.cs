@@ -36,23 +36,22 @@ namespace jkdl
             _linksProvider = linksProvider;
         }
 
-        public async Task DownloadAsync(string link)
+        private async Task DownloadAsync(DownloadProcessInfo info)
         {
             try
             {
-                _logger.LogInformation($"Downloading data from link: {link}");
-                var ofilename = _ofileNameProvider.GetAbsoluteFileName(link);
+                _logger.LogInformation($"Downloading data from link: {info.Link} to {info.Filename}...");
 
-                if (!File.Exists(ofilename) || (File.Exists(ofilename) && _configuration.OverwriteResult))
+                if (!File.Exists(info.Filename) || (File.Exists(info.Filename) && _configuration.OverwriteResult))
                 {
-                    using var client = _webClientFactory.CreateWebClient(link, ofilename);
-                    await client.DownloadFileTaskAsync(link, ofilename);
+                    using var client = _webClientFactory.CreateWebClient(info.Link, info.Filename);
+                    await client.DownloadFileTaskAsync(info.Link, info.Filename);
 
-                    _logger.LogInformation($"File {ofilename} successfully downloaded");
+                    _logger.LogInformation($"File {info.Filename} successfully downloaded");
                 }
                 else
                 {
-                    _logger.LogWarning($"File {ofilename} already exists!");
+                    _logger.LogWarning($"File {info.Filename} already exists and overwrite is not allowed!");
                 }
             }
             catch (Exception ex)
@@ -71,7 +70,7 @@ namespace jkdl
 
                 // Get link from blocking collection
                 var numberOfDownloads = 0;
-                foreach (var link in _linksCache.GetLinks(cancellationToken))
+                foreach (var link in _linksCache.Get(cancellationToken))
                 {
                     // Download link - at least one
                     numberOfDownloads++;

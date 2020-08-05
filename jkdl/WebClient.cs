@@ -42,25 +42,14 @@ namespace jkdl
         {
             lock (_progressLock)
             {
-                if (_progressCache.TryGetValue(_filename, out var info))
+                if (_progressCache.TryGetValue(_filename, out var info) &&
+                    e.ProgressPercentage > info.ProgressPercentage)
                 {
-                    if (e.ProgressPercentage > info.ProgressPercentage)
-                    {
-                        ProgressDownloadData(e);
-                    }
-                }
-                else
-                {
-                    ProgressDownloadData(e);
+                    var eainfo = new DownloadProcessInfoEventArgs(e, _link, _filename);
+                    _progressCache[_filename] = eainfo.Info;
+                    OnDownloadProgressInfoChanged?.Invoke(this, eainfo);
                 }
             }
-        }
-
-        private void ProgressDownloadData(DownloadProgressChangedEventArgs e)
-        {
-            var eainfo = new DownloadProcessInfoEventArgs(e, _link, _filename);
-            _progressCache[_filename] = eainfo.Info;
-            OnDownloadProgressInfoChanged?.Invoke(this, eainfo);
         }
     }
 }

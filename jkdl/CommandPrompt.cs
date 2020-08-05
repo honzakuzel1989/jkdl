@@ -49,13 +49,13 @@ namespace jkdl
                         break;
                     case "link":
                         var link = Reader.ReadLine();
-                        _linksCache.AddLink(link, cts.Token);
+                        _linksCache.Add(link, cts.Token);
                         break;
                     case "file":
                         var filename = Reader.ReadLine();
                         var flinks = await _linksProvider.GetLinks(new FileInfo(filename));
                         foreach (var flink in flinks)
-                            _linksCache.AddLink(flink, cts.Token);
+                            _linksCache.Add(flink, cts.Token);
                         break;
                     case "progress":
                         await _downloadProgressProvider.ReportProgress();
