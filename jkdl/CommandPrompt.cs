@@ -48,12 +48,10 @@ namespace jkdl
                         cts.Cancel();
                         break;
                     case "link":
-                        Writer.Write("link: ");
                         var link = Reader.ReadLine();
                         _linksCache.AddLink(link, cts.Token);
                         break;
                     case "file":
-                        Writer.Write("filename: ");
                         var filename = Reader.ReadLine();
                         var flinks = await _linksProvider.GetLinks(new FileInfo(filename));
                         foreach (var flink in flinks)
