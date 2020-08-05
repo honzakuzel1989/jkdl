@@ -11,16 +11,19 @@ namespace jkdl
 
         private readonly ILogger<DownloadProgressProvider> _logger;
         private readonly IDownloadProgressCache _downloadProgressCache;
+        private readonly ILinksCache _linksCache;
         private readonly ITextProvider _textProvider;
 
         private TextWriter Writer => _textProvider.Writer;
 
         public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger, 
             IDownloadProgressCache downloadProgressCache,
+            ILinksCache linksCache,
             ITextProvider textProvider)
         {
             _logger = logger;
             _downloadProgressCache = downloadProgressCache;
+            _linksCache = linksCache;
             _textProvider = textProvider;
         }
 
@@ -68,6 +71,7 @@ namespace jkdl
             var downloaded = 0;
             var downloadedSize = (long)0;
             var cancelled = 0;
+            var waiting = _linksCache.Count;
 
             foreach (var info in _downloadProgressCache.Values)
             {
@@ -89,7 +93,12 @@ namespace jkdl
                 }
             }
 
-            await Writer.WriteLineAsync($"\tActive: {active}\n\tDownloaded: {downloaded}\n\tSize: {downloadedSize} [{MB}]\n\tCancelled:{cancelled}");
+            await Writer.WriteLineAsync($"\t" +
+                $"Active: {active}\n\t" +
+                $"Downloaded: {downloaded}\n\t" +
+                $"Downloaded size: {downloadedSize} [{MB}]\n\t" +
+                $"Waiting: {waiting}\n\t" +
+                $"Cancelled: {cancelled}");
         }
     }
 }

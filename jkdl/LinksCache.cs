@@ -10,6 +10,8 @@ namespace jkdl
         private readonly BlockingCollection<string> _cache = new BlockingCollection<string>();
         private readonly ILogger<LinksCache> _logger;
 
+        public int Count => _cache.Count;
+
         public LinksCache(ILogger<LinksCache> logger)
         {
             _logger = logger;
