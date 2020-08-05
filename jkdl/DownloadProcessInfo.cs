@@ -4,15 +4,17 @@ namespace jkdl
 {
     public class DownloadProcessInfo
     {
-        public DownloadProcessInfo(string guid, string link, string filename)
+        public DownloadProcessInfo(DateTime start, string guid, string link, string filename)
         {
             Key = guid;
             Link = link;
             Filename = filename;
+            StartTime = start;
+            EndTime = start;
         }
 
-        public DownloadProcessInfo(string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool running)
-            : this(guid, link, filename)
+        public DownloadProcessInfo(DateTime start, string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool running)
+            : this(start, guid, link, filename)
         {
             BytesReceived = bytesReceived;
             TotalBytesToReceive = totalBytesToReceive;
@@ -20,8 +22,8 @@ namespace jkdl
             Running = running;
         }
 
-        public DownloadProcessInfo(string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool cancelled, Exception error, bool completed)
-            : this(guid, link, filename, bytesReceived, totalBytesToReceive, progressPercentage, running: false)
+        public DownloadProcessInfo(DateTime start, string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool cancelled, Exception error, bool completed, DateTime end)
+            : this(start, guid, link, filename, bytesReceived, totalBytesToReceive, progressPercentage, running: false)
         {
             Completed = completed;
             Cancelled = cancelled;
@@ -29,6 +31,8 @@ namespace jkdl
             Failed = error != null;
         }
 
+        public DateTime StartTime { get; }
+        public DateTime EndTime { get; }
         public bool Running { get; }
         public bool Completed { get; }
         public string Key { get; }
@@ -40,5 +44,6 @@ namespace jkdl
         public bool Cancelled { get; }
         public bool Failed { get; }
         public Exception Error { get; }
+        public TimeSpan Duration => EndTime > StartTime ? EndTime.Subtract(StartTime) : DateTime.Now.Subtract(StartTime);
     }
 }

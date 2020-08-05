@@ -11,6 +11,7 @@ namespace jkdl
         public DownloadProcessInfoEventArgs(DownloadProgressChangedEventArgs e, DownloadProcessInfo info)
         {
             Info = new DownloadProcessInfo(
+                info.StartTime,
                 info.Key,
                 info.Link, 
                 info.Filename, 

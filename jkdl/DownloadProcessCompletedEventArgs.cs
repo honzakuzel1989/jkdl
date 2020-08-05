@@ -10,6 +10,7 @@ namespace jkdl
         public DownloadProcessCompletedEventArgs(AsyncCompletedEventArgs e, DownloadProcessInfo info)
         {
             Info = new DownloadProcessInfo(
+                info.StartTime,
                 info.Key,
                 info.Link, 
                 info.Filename,
@@ -18,7 +19,8 @@ namespace jkdl
                 info.ProgressPercentage,
                 e.Cancelled,
                 e.Error,
-                completed: true);
+                completed: true,
+                DateTime.Now);
         }
     }
 }

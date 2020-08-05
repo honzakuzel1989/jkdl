@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -26,18 +27,22 @@ namespace jkdl
 
         public async Task ReportProgress()
         {
-            bool empty = true;
+            bool cacheWasEmpty = true;
 
             foreach (var info in _downloadProgressCache.Values)
             {
                 if (!info.Completed)
                 {
-                    await Writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
-                    empty = false;
+                    await Writer.WriteLineAsync($"" +
+                        $"\t{info.Filename} {(!info.Running ? " - waiting" : string.Empty)}" +
+                        $"\n\t{info.ProgressPercentage} [%] ({info.Duration})" +
+                        $"\n\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
+
+                    cacheWasEmpty = false;
                 }
             }
 
-            if (empty)
+            if (cacheWasEmpty)
             {
                 Writer.WriteLine("\tNo current download...");
             }
@@ -45,7 +50,7 @@ namespace jkdl
 
         public async Task ReportHistory()
         {
-            bool empty = true;
+            bool cacheWasEmpty = true;
 
             foreach (var info in _downloadProgressCache.Values)
             {
@@ -55,12 +60,16 @@ namespace jkdl
                     if (info.Cancelled) result = "Cancelled";
                     if (info.Failed) result = "Failed";
 
-                    await Writer.WriteLineAsync($"\t{info.Filename}\n\t\t{info.ProgressPercentage} [%]\t{result}");
-                    empty = false;
+                    await Writer.WriteLineAsync(
+                        $"\t{info.Filename}" +
+                        $"\n\t{info.StartTime} - {info.EndTime} [{info.Duration}]" +
+                        $"\n\t{info.ProgressPercentage} [%]\t{result}");
+
+                    cacheWasEmpty = false;
                 }
             }
 
-            if (empty)
+            if (cacheWasEmpty)
             {
                 Writer.WriteLine("\tNo history yet...");
             }
@@ -74,6 +83,7 @@ namespace jkdl
             var cancelled = 0;
             var waiting = 0;
             var failed = 0;
+            var downloadedTime = TimeSpan.Zero;
 
             foreach (var info in _downloadProgressCache.Values)
             {
@@ -91,6 +101,7 @@ namespace jkdl
                     {
                         downloaded++;
                         downloadedSize += info.BytesReceived / MBMULT;
+                        downloadedTime += info.Duration;
                     }
                 }
                 else
@@ -109,7 +120,8 @@ namespace jkdl
             await Writer.WriteLineAsync($"\t" +
                 $"Active: {active}\n\t" +
                 $"Downloaded: {downloaded}\n\t" +
-                $"Downloaded size: {downloadedSize} [{MB}]\n\t" +
+                $"Total size: {downloadedSize} [{MB}]\n\t" +
+                $"Total time: {downloadedTime}\n\t" +
                 $"Waiting: {waiting}\n\t" +
                 $"Failed: {failed}\n\t" +
                 $"Cancelled: {cancelled}");

@@ -29,7 +29,7 @@ namespace jkdl
             var guid = Guid.NewGuid().ToString();
 
             var filename = _outputFileNameProvider.GetAbsoluteFileName(link);
-            var info = new DownloadProcessInfo(guid, link, filename);
+            var info = new DownloadProcessInfo(DateTime.Now, guid, link, filename);
 
             _downloadProgressCache[guid] = info;
             _linksCache.Add(info, cancellationToken);
