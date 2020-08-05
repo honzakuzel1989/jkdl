@@ -29,6 +29,7 @@ namespace jkdl
             Cancelled = cancelled;
             Error = error;
             Failed = error != null;
+            EndTime = end;
         }
 
         public DateTime StartTime { get; }

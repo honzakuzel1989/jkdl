@@ -35,7 +35,7 @@ namespace jkdl
                 if (!info.Completed)
                 {
                     await Writer.WriteLineAsync($"" +
-                        $"\t[{++counter}] {info.Filename} {(!info.Running ? " - waiting" : string.Empty)}" +
+                        $"\t[{++counter}] {info.Filename}{(!info.Running ? " - waiting" : string.Empty)}" +
                         $"\n\t{info.ProgressPercentage} [%] ({info.CalculateDuration()})" +
                         $"\n\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
 
