@@ -9,17 +9,19 @@ namespace jkdl
     internal class LinksProvider : ILinksProvider
     {
         private readonly ILogger<LinksProvider> _logger;
+        private readonly INotificationService _notificationService;
 
-        public LinksProvider(ILogger<LinksProvider> logger)
+        public LinksProvider(ILogger<LinksProvider> logger, INotificationService notificationService)
         {
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         public async Task<string[]> GetLinks(FileInfo fileInfo)
         {
             if (!fileInfo.Exists)
             {
-                _logger.LogError($"File {fileInfo.FullName} does not exist!");
+                await _notificationService.ProccessError(_logger, $"File {fileInfo.FullName} does not exist!");
                 return await Task.FromResult(Array.Empty<string>());
             }
 
