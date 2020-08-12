@@ -5,11 +5,11 @@ using System.Timers;
 
 namespace jkdl
 {
-    public class DownloadProgressMonitor : IDownloadProgressMonitor
+    class DownloadProgressMonitor : IDownloadProgressMonitor
     {
         private readonly ILogger<DownloadProgressMonitor> _logger;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
-        private readonly IDownloadProgressCache _downloadProgressCache;
+        private readonly IDownloadClientsCache _downloadClientsCache;
         private readonly ITextProvider _textProvider;
         private bool _disposedValue;
         private readonly Timer _progressTimer;
@@ -17,12 +17,12 @@ namespace jkdl
         public DownloadProgressMonitor(ILogger<DownloadProgressMonitor> logger,
             IDownloadProgressProvider downloadProgressProvider,
             IConfigurationService configurationService,
-            IDownloadProgressCache downloadProgressCache,
+            IDownloadClientsCache downloadClientsCache,
             ITextProvider textProvider)
         {
             _logger = logger;
             _downloadProgressProvider = downloadProgressProvider;
-            _downloadProgressCache = downloadProgressCache;
+            _downloadClientsCache = downloadClientsCache;
             _textProvider = textProvider;
 
             _progressTimer = new Timer(TimeSpan.FromSeconds(configurationService.MonitorPeriodInSecond).TotalMilliseconds);
@@ -31,7 +31,7 @@ namespace jkdl
 
         private async void _progressTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!_downloadProgressCache.IsEmpty)
+            if (!_downloadClientsCache.IsEmpty)
             {
                 await _downloadProgressProvider.ReportProgress();
                 await _textProvider.Writer.WriteLineAsync();
