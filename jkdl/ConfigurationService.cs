@@ -8,7 +8,7 @@
 
         public bool Interactive => true;
         public bool OverwriteResult => true;
-        public int MaxNumberOfDownload => 1;
+        public int MaxNumberOfDownload => 3;
         public string DownloadLocation => ".";
         public int DownloadProgressThrash => 1;
         public int MonitorPeriodInSecond => 1;
