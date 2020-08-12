@@ -125,7 +125,8 @@ namespace jkdl
                 $"Active: {active}\n\t" +
                 $"Downloaded: {downloaded}\n\t" +
                 $"Total size: {downloadedSize} [{MB}]\n\t" +
-                $"Total time: {downloadedTime}\n\t" +
+                $"Total time: {downloadedTime:'dd' days, 'hh' hours, 'mm' minutes}\n\t" +
+                $"Average speed: {downloadedSize/downloadedTime.TotalSeconds} [{MB}/s]\n\t" +
                 $"Waiting: {waiting}\n\t" +
                 $"Failed: {failed}\n\t" +
                 $"Cancelled: {cancelled}");
