@@ -96,7 +96,7 @@ namespace jkdl
             Writer.WriteLine($"\tstats - print download statistics");
             Writer.WriteLine($"\thistory - print download history");
             Writer.WriteLine($"\tstart monitor - start monitor download history");
-            Writer.WriteLine($"\tsstop monitor - start monitor download history");
+            Writer.WriteLine($"\tstop monitor - start monitor download history");
             Writer.WriteLine($"\texit - exit the application");
             Writer.WriteLine($"\thelp - exit the application");
         }

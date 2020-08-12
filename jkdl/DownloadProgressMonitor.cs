@@ -9,7 +9,7 @@ namespace jkdl
     {
         private readonly ILogger<DownloadProgressMonitor> _logger;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
-        private readonly IConfigurationService _configurationService;
+        private readonly IDownloadProgressCache _downloadProgressCache;
         private readonly ITextProvider _textProvider;
         private bool _disposedValue;
         private readonly Timer _progressTimer;
@@ -17,22 +17,25 @@ namespace jkdl
         public DownloadProgressMonitor(ILogger<DownloadProgressMonitor> logger,
             IDownloadProgressProvider downloadProgressProvider,
             IConfigurationService configurationService,
+            IDownloadProgressCache downloadProgressCache,
             ITextProvider textProvider)
         {
             _logger = logger;
             _downloadProgressProvider = downloadProgressProvider;
-            _configurationService = configurationService;
+            _downloadProgressCache = downloadProgressCache;
             _textProvider = textProvider;
-            _progressTimer = new Timer(TimeSpan.FromSeconds(_configurationService.MonitorPeriodInSecond).TotalMilliseconds);
+
+            _progressTimer = new Timer(TimeSpan.FromSeconds(configurationService.MonitorPeriodInSecond).TotalMilliseconds);
             _progressTimer.Elapsed += _progressTimer_Elapsed;
         }
 
         private async void _progressTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await _downloadProgressProvider.ReportProgress();
-            await _textProvider.Writer.WriteLineAsync();
-
-            await Task.Delay(TimeSpan.FromSeconds(_configurationService.MonitorPeriodInSecond));
+            if (!_downloadProgressCache.IsEmpty)
+            {
+                await _downloadProgressProvider.ReportProgress();
+                await _textProvider.Writer.WriteLineAsync();
+            }
         }
 
         public void StartMonitor()

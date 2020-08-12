@@ -15,6 +15,8 @@ namespace jkdl
             set => _cache[filename] = value;
         }
 
+        public bool IsEmpty => _cache.IsEmpty;
+
         public IEnumerable<DownloadProcessInfo> Values => _cache.Values;
 
         public DownloadProgressCache(ILogger<DownloadProgressCache> logger)
