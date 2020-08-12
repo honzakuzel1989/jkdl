@@ -48,6 +48,16 @@ namespace jkdl
 
         public TimeSpan CalculateDuration()
         {
+            return FormatDuration(CalculateDurationInternal());
+        }
+
+        private TimeSpan FormatDuration(TimeSpan ts)
+        {
+            return new TimeSpan(ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
+        }
+
+        private TimeSpan CalculateDurationInternal()
+        {
             if (EndTime > StartTime)
             {
                 return EndTime.Subtract(StartTime);

@@ -37,10 +37,15 @@ namespace jkdl
             {
                 if (!info.Completed)
                 {
+                    var duration = info.CalculateDuration();
+                    var mbreceived = info.BytesReceived / MBMULT;
+
                     await Writer.WriteLineAsync($"" +
-                        $"\t[{info.Key}] {info.Filename}{(!info.Running ? " - waiting" : string.Empty)}" +
-                        $"\n\t{info.ProgressPercentage} [%] ({info.CalculateDuration()})" +
-                        $"\n\t{info.BytesReceived / MBMULT}/{info.TotalBytesToReceive / MBMULT} [{MB}]");
+                        $"\t[{info.Key}]" +
+                        $"\n\t{info.Filename}{(!info.Running ? " - waiting" : string.Empty)}" +
+                        $"\n\t{info.ProgressPercentage} [%] ({duration})" +
+                        $"\n\t{mbreceived}/{info.TotalBytesToReceive / MBMULT} [{MB}]" +
+                        $"\n\t{Math.Round(mbreceived / duration.TotalSeconds, 2, MidpointRounding.AwayFromZero)} [{MB}/s]");
 
                     cacheWasEmpty = false;
                 }
@@ -125,8 +130,8 @@ namespace jkdl
                 $"Active: {active}\n\t" +
                 $"Downloaded: {downloaded}\n\t" +
                 $"Total size: {downloadedSize} [{MB}]\n\t" +
-                $"Total time: {downloadedTime:'dd' days, 'hh' hours, 'mm' minutes}\n\t" +
-                $"Average speed: {downloadedSize/downloadedTime.TotalSeconds} [{MB}/s]\n\t" +
+                $"Total time: {new TimeSpan(downloadedTime.Days, downloadedTime.Hours, downloadedTime.Minutes, downloadedTime.Seconds)}\n\t" +
+                $"Average speed: {Math.Round(downloadedSize/downloadedTime.TotalSeconds, 2, MidpointRounding.AwayFromZero)} [{MB}/s]\n\t" +
                 $"Waiting: {waiting}\n\t" +
                 $"Failed: {failed}\n\t" +
                 $"Cancelled: {cancelled}");
