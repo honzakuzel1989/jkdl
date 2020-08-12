@@ -9,10 +9,10 @@ namespace jkdl
         private readonly ConcurrentDictionary<string, DownloadProcessInfo> _cache = new ConcurrentDictionary<string, DownloadProcessInfo>();
         private readonly ILogger<DownloadProgressCache> _logger;
 
-        public DownloadProcessInfo this[string filename]
+        public DownloadProcessInfo this[string key]
         {
-            get => _cache[filename];
-            set => _cache[filename] = value;
+            get => _cache[key];
+            set => _cache[key] = value;
         }
 
         public bool IsEmpty => _cache.IsEmpty;
@@ -24,9 +24,9 @@ namespace jkdl
             _logger = logger;
         }
 
-        public bool TryGetValue(string filename, out DownloadProcessInfo info)
+        public bool TryGetValue(string key, out DownloadProcessInfo info)
         {
-            return _cache.TryGetValue(filename, out info);
+            return _cache.TryGetValue(key, out info);
         }
     }
 }

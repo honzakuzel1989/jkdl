@@ -56,6 +56,10 @@ namespace jkdl
                     case "progress":
                         await _downloadProgressProvider.ReportProgress();
                         break;
+                    case "cancel":
+                        var key = Reader.ReadLine();
+                        await _fileDownloader.CancelDownload(key);
+                        break;
                     case "stats":
                         await _downloadProgressProvider.ReportStatistics();
                         break;

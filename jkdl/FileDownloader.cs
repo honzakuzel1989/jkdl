@@ -9,31 +9,28 @@ namespace jkdl
     internal class FileDownloader : IFileDownloader
     {
         private readonly ILogger<FileDownloader> _logger;
-        private readonly IOutputFileNameProvider _ofileNameProvider;
-        private readonly IDownloadProgressProvider _downloadProgressProvider;
         private readonly IWebClientFactory _webClientFactory;
         private readonly IConfigurationService _configuration;
         private readonly ILinksCache _linksCache;
         private readonly ITextProvider _textProvider;
-        private readonly ILinksProvider _linksProvider;
+        private readonly IDownloadClientsCache _downloadClientsCache;
+        private readonly INotificationService _notificationService;
 
         public FileDownloader(ILogger<FileDownloader> logger,
-            ILinksProvider linksProvider,
-            IOutputFileNameProvider ofileNameProvider,
-            IDownloadProgressProvider downloadProgressProvider,
             IWebClientFactory webClientFactory,
             IConfigurationService configuration,
             ILinksCache linksCache,
-            ITextProvider textProvider)
+            ITextProvider textProvider,
+            IDownloadClientsCache downloadClientsCache,
+            INotificationService notificationService)
         {
             _logger = logger;
-            _ofileNameProvider = ofileNameProvider;
-            _downloadProgressProvider = downloadProgressProvider;
             _webClientFactory = webClientFactory;
             _configuration = configuration;
             _linksCache = linksCache;
             _textProvider = textProvider;
-            _linksProvider = linksProvider;
+            _downloadClientsCache = downloadClientsCache;
+            _notificationService = notificationService;
         }
 
         private async Task DownloadAsync(DownloadProcessInfo info)
@@ -45,6 +42,8 @@ namespace jkdl
                 if (!File.Exists(info.Filename) || (File.Exists(info.Filename) && _configuration.OverwriteResult))
                 {
                     using var client = _webClientFactory.CreateWebClient(info);
+                    _downloadClientsCache[info.Key] = client;
+                    
                     await client.DownloadFileTaskAsync(info.Link, info.Filename);
 
                     _logger.LogInformation($"File {info.Filename} successfully downloaded");
@@ -56,9 +55,11 @@ namespace jkdl
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
-                _textProvider.Writer.WriteLine($"Error: {ex.Message}");
-
+                await _notificationService.ProccessError(_logger, ex);
+            }
+            finally
+            {
+                _downloadClientsCache[info.Key].CancelAsync();
             }
         }
 
@@ -85,6 +86,20 @@ namespace jkdl
             {
                 _logger.LogInformation("Downloader ended...");
             }
+        }
+
+        public async Task CancelDownload(string key)
+        {
+            if (_downloadClientsCache.TryGetValue(key, out var client))
+            {
+                // TODO: cancel download
+                //await Task.Run(() => client.CancelAsync());
+            }
+            else
+            {
+                await _notificationService.ProccessError(_logger, $"Client for download with key {key} not found.");
+            }
+
         }
     }
 }

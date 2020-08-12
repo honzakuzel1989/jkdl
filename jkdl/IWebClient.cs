@@ -9,5 +9,6 @@ namespace jkdl
         event EventHandler<DownloadProcessCompletedEventArgs> OnDownloadProgressCompleted;
 
         Task DownloadFileTaskAsync(string link, string filename);
+        void CancelAsync();
     }
 }

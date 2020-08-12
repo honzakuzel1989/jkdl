@@ -15,6 +15,7 @@ namespace jkdl
 
             services.AddSingleton<IConfigurationService>(config);
             services.AddSingleton<IDownloadProgressCache, DownloadProgressCache>();
+            services.AddSingleton<IDownloadClientsCache, DownloadClientsCache>();
             services.AddSingleton<ILinksCache, LinksCache>();
             services.AddSingleton<ICommandPrompt, CommandPrompt>();
             services.AddSingleton<ITextProvider, ConsoleTextProvider>();

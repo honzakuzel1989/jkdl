@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace jkdl
@@ -16,6 +17,11 @@ namespace jkdl
         {
             await _textProvider.Writer.WriteLineAsync($"Error: {msg}");
             logger.LogError(msg);
+        }
+
+        public async Task ProccessError(ILogger logger, Exception ex)
+        {
+            await ProccessError(logger, ex.Message);
         }
     }
 }

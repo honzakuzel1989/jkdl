@@ -6,7 +6,7 @@ namespace jkdl
     {
         bool IsEmpty { get; }
         IEnumerable<DownloadProcessInfo> Values { get; }
-        DownloadProcessInfo this[string filename] { get; set; }
-        bool TryGetValue(string filename, out DownloadProcessInfo info);
+        DownloadProcessInfo this[string key] { get; set; }
+        bool TryGetValue(string key, out DownloadProcessInfo info);
     }
 }
