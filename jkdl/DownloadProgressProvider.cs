@@ -39,13 +39,17 @@ namespace jkdl
                 {
                     var duration = info.CalculateDuration();
                     var mbreceived = info.BytesReceived / MBMULT;
+                    var mbtotal = info.TotalBytesToReceive / MBMULT;
+                    var mbspeed = Math.Round(mbreceived / duration.TotalSeconds, 2, MidpointRounding.AwayFromZero);
+                    var estimatedtime = mbspeed > 0 ? ((mbtotal - mbreceived) / mbspeed) : double.NaN;
 
                     await Writer.WriteLineAsync($"" +
                         $"\t[{info.Key}]" +
                         $"\n\t{info.Filename}{(!info.Running ? " - waiting" : string.Empty)}" +
                         $"\n\t{info.ProgressPercentage} [%] ({duration})" +
-                        $"\n\t{mbreceived}/{info.TotalBytesToReceive / MBMULT} [{MB}]" +
-                        $"\n\t{Math.Round(mbreceived / duration.TotalSeconds, 2, MidpointRounding.AwayFromZero)} [{MB}/s]");
+                        $"\n\t{mbreceived}/{mbtotal} [{MB}]" +
+                        $"\n\t{mbspeed} [{MB}/s]" +
+                        $"\n\t{(double.IsNaN(mbspeed) ? double.NaN.ToString() : TimeSpan.FromSeconds(estimatedtime).ToString())}");
 
                     cacheWasEmpty = false;
                 }
@@ -131,7 +135,7 @@ namespace jkdl
                 $"Downloaded: {downloaded}\n\t" +
                 $"Total size: {downloadedSize} [{MB}]\n\t" +
                 $"Total time: {new TimeSpan(downloadedTime.Days, downloadedTime.Hours, downloadedTime.Minutes, downloadedTime.Seconds)}\n\t" +
-                $"Average speed: {Math.Round(downloadedSize/downloadedTime.TotalSeconds, 2, MidpointRounding.AwayFromZero)} [{MB}/s]\n\t" +
+                $"Average speed: {Math.Round(downloadedSize / downloadedTime.TotalSeconds, 2, MidpointRounding.AwayFromZero)} [{MB}/s]\n\t" +
                 $"Waiting: {waiting}\n\t" +
                 $"Failed: {failed}\n\t" +
                 $"Cancelled: {cancelled}");
