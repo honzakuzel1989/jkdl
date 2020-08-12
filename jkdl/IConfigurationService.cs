@@ -2,9 +2,11 @@
 {
     public interface IConfigurationService
     {
-        public int MaxNumberOfDownload { get; }
-        public bool OverwriteResult { get; }
-        public string DownloadLocation { get; }
-        public int DownloadProgressThrash { get; }
+        int MonitorPeriodInSecond { get; }
+        bool Interactive { get; }
+        int MaxNumberOfDownload { get; }
+        bool OverwriteResult { get; }
+        string DownloadLocation { get; }
+        int DownloadProgressThrash { get; }
     }
 }

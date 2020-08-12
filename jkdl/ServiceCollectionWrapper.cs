@@ -24,6 +24,7 @@ namespace jkdl
             services.AddTransient<ILinksProvider, LinksProvider>();
             services.AddTransient<IWebClientFactory, WebClientFactory>();
             services.AddTransient<IDownloadProgressProvider, DownloadProgressProvider>();
+            services.AddTransient<IDownloadProgressMonitor, DownloadProgressMonitor>();
 
             _serviceProvider = services.BuildServiceProvider();
         }

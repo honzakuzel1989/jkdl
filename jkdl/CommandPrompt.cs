@@ -13,6 +13,7 @@ namespace jkdl
         private readonly ILinksProvider _linksProvider;
         private readonly IFileDownloader _fileDownloader;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
+        private readonly IDownloadProgressMonitor _downloadProgressMonitor;
         private readonly ITextProvider _textProvider;
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -24,6 +25,7 @@ namespace jkdl
             ILinksProvider linksProvider,
             IFileDownloader fileDownloader,
             IDownloadProgressProvider downloadProgressProvider,
+            IDownloadProgressMonitor downloadProgressMonitor,
             ITextProvider textProvider)
         {
             _logger = logger;
@@ -31,12 +33,13 @@ namespace jkdl
             _linksProvider = linksProvider;
             _fileDownloader = fileDownloader;
             _downloadProgressProvider = downloadProgressProvider;
+            _downloadProgressMonitor = downloadProgressMonitor;
             _textProvider = textProvider;
         }
 
         public async Task RunAsync()
         {
-            _ = Task.Run(() => _fileDownloader.Run(cts.Token));
+            _ = Task.Run(async () => await _fileDownloader.Run(cts.Token));
 
             var line = string.Empty;
             while (!cts.IsCancellationRequested)
@@ -62,14 +65,21 @@ namespace jkdl
                     case "history":
                         await _downloadProgressProvider.ReportHistory();
                         break;
-                    case "":
-                        Writer.WriteLine($"Print {Guid.NewGuid():N} for available commands...");
+                    case "start monitor":
+                        _downloadProgressMonitor.StartMonitor();
+                        break;
+                    case "stop monitor":
+                        _downloadProgressMonitor.StopMonitor();
                         break;
                     case "help":
                         PrintHelp();
                         break;
+                    case "link":
+                        var link = Reader.ReadLine();
+                        _linksCache.Add(link, cts.Token);
+                        break;
                     default:
-                        _linksCache.Add(line, cts.Token);
+                        Writer.WriteLine("Unknown command. Type \"help\" for available commands.");
                         break;
                 }
             }
@@ -83,10 +93,13 @@ namespace jkdl
         private void PrintAvailableCommands()
         {
             Writer.WriteLine("Available commands:");
+            Writer.WriteLine($"\tlink - insert link into the cache to download");
             Writer.WriteLine($"\tfile - insert filename with links into the cache to download");
             Writer.WriteLine($"\tprogress - print download progress");
             Writer.WriteLine($"\tstats - print download statistics");
             Writer.WriteLine($"\thistory - print download history");
+            Writer.WriteLine($"\tstart monitor - start monitor download history");
+            Writer.WriteLine($"\tsstop monitor - start monitor download history");
             Writer.WriteLine($"\texit - exit the application");
             Writer.WriteLine($"\thelp - exit the application");
         }

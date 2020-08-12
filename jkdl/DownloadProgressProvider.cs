@@ -12,16 +12,20 @@ namespace jkdl
 
         private readonly ILogger<DownloadProgressProvider> _logger;
         private readonly IDownloadProgressCache _downloadProgressCache;
+        private readonly IConfigurationService _configurationService;
         private readonly ITextProvider _textProvider;
 
         private TextWriter Writer => _textProvider.Writer;
+        private TextReader Reader => _textProvider.Reader;
 
         public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger,
             IDownloadProgressCache downloadProgressCache,
+            IConfigurationService configurationService,
             ITextProvider textProvider)
         {
             _logger = logger;
             _downloadProgressCache = downloadProgressCache;
+            _configurationService = configurationService;
             _textProvider = textProvider;
         }
 
