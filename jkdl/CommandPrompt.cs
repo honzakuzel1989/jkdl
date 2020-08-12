@@ -62,10 +62,10 @@ namespace jkdl
                     case "history":
                         await _downloadProgressProvider.ReportHistory();
                         break;
-                    case "start monitor":
+                    case "monitor start":
                         _downloadProgressMonitor.StartMonitor();
                         break;
-                    case "stop monitor":
+                    case "monitor stop":
                         _downloadProgressMonitor.StopMonitor();
                         break;
                     case "help":
@@ -95,8 +95,8 @@ namespace jkdl
             Writer.WriteLine($"\tprogress - print download progress");
             Writer.WriteLine($"\tstats - print download statistics");
             Writer.WriteLine($"\thistory - print download history");
-            Writer.WriteLine($"\tstart monitor - start monitor download history");
-            Writer.WriteLine($"\tstop monitor - start monitor download history");
+            Writer.WriteLine($"\tmonitor start - start monitor download history");
+            Writer.WriteLine($"\tmonitor stop - start monitor download history");
             Writer.WriteLine($"\texit - exit the application");
             Writer.WriteLine($"\thelp - exit the application");
         }

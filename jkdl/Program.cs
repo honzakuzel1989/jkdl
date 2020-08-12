@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,11 +23,14 @@ namespace jkdl
                 if (config.Interactive)
                 {
                     _ = Task.Run(async () => await provider.Downloader.Run(cts.Token));
-                    
+
                     await provider.ComandPrompt.Run(cts);
 
-                    Console.Out.WriteLine("Press [Enter] to exit...");
-                    Console.In.ReadLine();
+                    if (Debugger.IsAttached)
+                    {
+                        Console.Out.WriteLine("Press [Enter] to exit...");
+                        Console.In.ReadLine();
+                    }
                 }
                 else
                 {
