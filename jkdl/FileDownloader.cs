@@ -74,8 +74,7 @@ namespace jkdl
                 {
                     // Download link - at least one
                     numberOfDownloads++;
-                    _ = Task.Run(async () => await DownloadAsync(link))
-                        .ContinueWith(_ => numberOfDownloads--);
+                    _ = Task.Run(async () => await DownloadAsync(link)).ContinueWith(_ => numberOfDownloads--);
 
                     // Wait for empty download slot
                     while (numberOfDownloads >= _configuration.MaxNumberOfDownload)

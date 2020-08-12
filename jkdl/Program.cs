@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace jkdl
@@ -13,13 +14,24 @@ namespace jkdl
         {
             try
             {
+                var cts = new CancellationTokenSource();
+
                 var config = new ConfigurationService(args);
                 var provider = new ServiceCollectionWrapper(config);
 
-                await provider.ComandPrompt.RunAsync();
+                if (config.Interactive)
+                {
+                    _ = Task.Run(async () => await provider.Downloader.Run(cts.Token));
+                    
+                    await provider.ComandPrompt.Run(cts);
 
-                Console.Out.WriteLine("Press [Enter] to exit...");
-                Console.In.ReadLine();
+                    Console.Out.WriteLine("Press [Enter] to exit...");
+                    Console.In.ReadLine();
+                }
+                else
+                {
+                    await provider.Downloader.Run(cts.Token);
+                }
             }
             catch (Exception ex)
             {

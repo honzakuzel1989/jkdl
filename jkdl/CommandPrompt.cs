@@ -15,7 +15,6 @@ namespace jkdl
         private readonly IDownloadProgressProvider _downloadProgressProvider;
         private readonly IDownloadProgressMonitor _downloadProgressMonitor;
         private readonly ITextProvider _textProvider;
-        private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         private TextReader Reader => _textProvider.Reader;
         private TextWriter Writer => _textProvider.Writer;
@@ -37,10 +36,8 @@ namespace jkdl
             _textProvider = textProvider;
         }
 
-        public async Task RunAsync()
+        public async Task Run(CancellationTokenSource cts)
         {
-            _ = Task.Run(async () => await _fileDownloader.Run(cts.Token));
-
             var line = string.Empty;
             while (!cts.IsCancellationRequested)
             {

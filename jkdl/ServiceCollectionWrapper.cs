@@ -30,5 +30,6 @@ namespace jkdl
         }
 
         internal ICommandPrompt ComandPrompt => _serviceProvider.GetRequiredService<ICommandPrompt>();
+        internal IFileDownloader Downloader => _serviceProvider.GetRequiredService<IFileDownloader>();
     }
 }
