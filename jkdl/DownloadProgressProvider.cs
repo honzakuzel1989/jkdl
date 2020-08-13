@@ -7,7 +7,7 @@ namespace jkdl
 {
     public class DownloadProgressProvider : IDownloadProgressProvider
     {
-        const int MBMULT = 1_000_000;
+        const int MBMULT = 1024 * 1024;
         const string MB = "MB";
 
         private readonly ILogger<DownloadProgressProvider> _logger;

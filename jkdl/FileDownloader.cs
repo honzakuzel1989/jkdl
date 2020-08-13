@@ -12,24 +12,21 @@ namespace jkdl
         private readonly IWebClientFactory _webClientFactory;
         private readonly IConfigurationService _configuration;
         private readonly ILinksCache _linksCache;
-        private readonly ITextProvider _textProvider;
-        private readonly IDownloadClientsCache _downloadClientsCache;
+        private readonly IDownloadProgressCache _downloadProgressCache;
         private readonly INotificationService _notificationService;
 
         public FileDownloader(ILogger<FileDownloader> logger,
             IWebClientFactory webClientFactory,
             IConfigurationService configuration,
             ILinksCache linksCache,
-            ITextProvider textProvider,
-            IDownloadClientsCache downloadClientsCache,
+            IDownloadProgressCache downloadProgressCache,
             INotificationService notificationService)
         {
             _logger = logger;
             _webClientFactory = webClientFactory;
             _configuration = configuration;
             _linksCache = linksCache;
-            _textProvider = textProvider;
-            _downloadClientsCache = downloadClientsCache;
+            _downloadProgressCache = downloadProgressCache;
             _notificationService = notificationService;
         }
 
@@ -42,9 +39,7 @@ namespace jkdl
                 if (!File.Exists(info.Filename) || (File.Exists(info.Filename) && _configuration.OverwriteResult))
                 {
                     using var client = _webClientFactory.CreateWebClient(info);
-                    _downloadClientsCache[info.Key] = client;
-                    
-                    await client.DownloadFileTaskAsync(info.Link, info.Filename);
+                    await client.DownloadFile(info.Link, info.Filename, info.TokenSource.Token);
 
                     _logger.LogInformation($"File {info.Filename} successfully downloaded");
                 }
@@ -56,10 +51,6 @@ namespace jkdl
             catch (Exception ex)
             {
                 await _notificationService.ProccessError(_logger, ex);
-            }
-            finally
-            {
-                _downloadClientsCache[info.Key].CancelAsync();
             }
         }
 
@@ -90,14 +81,13 @@ namespace jkdl
 
         public async Task CancelDownload(string key)
         {
-            if (_downloadClientsCache.TryGetValue(key, out var client))
+            if (_downloadProgressCache.TryGetValue(key, out var info))
             {
-                // TODO: cancel download
-                //await Task.Run(() => client.CancelAsync());
+                info.TokenSource.Cancel();
             }
             else
             {
-                await _notificationService.ProccessError(_logger, $"Client for download with key {key} not found.");
+                await _notificationService.ProccessError(_logger, $"Download with key {key} not found.");
             }
 
         }

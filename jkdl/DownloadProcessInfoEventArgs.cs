@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Net;
 
 namespace jkdl
 {
@@ -8,16 +6,16 @@ namespace jkdl
     {
         public DownloadProcessInfo Info { get; }
 
-        public DownloadProcessInfoEventArgs(DownloadProgressChangedEventArgs e, DownloadProcessInfo info)
+        public DownloadProcessInfoEventArgs(long received, long toReceive, int percentage, DownloadProcessInfo info)
         {
             Info = new DownloadProcessInfo(
                 info.StartTime,
                 info.Key,
                 info.Link, 
-                info.Filename, 
-                e.BytesReceived, 
-                e.TotalBytesToReceive, 
-                e.ProgressPercentage,
+                info.Filename,
+                received, 
+                toReceive,
+                percentage,
                 running: true);
         }
     }

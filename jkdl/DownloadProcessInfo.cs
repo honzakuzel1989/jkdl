@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace jkdl
 {
@@ -11,6 +12,8 @@ namespace jkdl
             Filename = filename;
             StartTime = start;
             EndTime = start;
+
+            TokenSource = new CancellationTokenSource();
         }
 
         public DownloadProcessInfo(DateTime start, string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool running)
@@ -45,6 +48,7 @@ namespace jkdl
         public bool Cancelled { get; }
         public bool Failed { get; }
         public Exception Error { get; }
+        public CancellationTokenSource TokenSource { get; }
 
         public TimeSpan CalculateDuration()
         {

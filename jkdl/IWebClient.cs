@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace jkdl
@@ -8,7 +9,6 @@ namespace jkdl
         event EventHandler<DownloadProcessInfoEventArgs> OnDownloadProgressInfoChanged;
         event EventHandler<DownloadProcessCompletedEventArgs> OnDownloadProgressCompleted;
 
-        Task DownloadFileTaskAsync(string link, string filename);
-        void CancelAsync();
+        Task DownloadFile(string link, string filename, CancellationToken token);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 
 namespace jkdl
 {
@@ -7,7 +6,7 @@ namespace jkdl
     {
         public DownloadProcessInfo Info { get; }
 
-        public DownloadProcessCompletedEventArgs(AsyncCompletedEventArgs e, DownloadProcessInfo info)
+        public DownloadProcessCompletedEventArgs(Exception ex, bool cancelled, DownloadProcessInfo info)
         {
             Info = new DownloadProcessInfo(
                 info.StartTime,
@@ -17,8 +16,8 @@ namespace jkdl
                 info.BytesReceived,
                 info.TotalBytesToReceive,
                 info.ProgressPercentage,
-                e.Cancelled,
-                e.Error,
+                cancelled,
+                ex,
                 completed: true,
                 DateTime.Now);
         }

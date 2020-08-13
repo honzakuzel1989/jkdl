@@ -1,6 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Net;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace jkdl
 {
@@ -16,43 +17,86 @@ namespace jkdl
         private readonly IDownloadProgressCache _progressCache;
         private readonly IConfigurationService _configurationService;
 
-        public WebClient(string processKey, 
+        public WebClient(string processKey,
             IDownloadProgressCache progressCache,
             IConfigurationService configurationService)
         {
             _processKey = processKey;
-            
+
             _progressCache = progressCache;
             _configurationService = configurationService;
-
-            DownloadProgressChanged += WebClientWrapper_DownloadProgressChanged;
-            DownloadFileCompleted += WebClient_DownloadFileCompleted;
         }
 
-        private void WebClient_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        private void DownloadCompleted(Exception exception, bool cancelled)
         {
             lock (_progressLock)
             {
                 if (_progressCache.TryGetValue(_processKey, out var info))
                 {
-                    var eacompleted = new DownloadProcessCompletedEventArgs(e, info);
+                    var eacompleted = new DownloadProcessCompletedEventArgs(exception, cancelled, info);
                     _progressCache[_processKey] = eacompleted.Info;
                     OnDownloadProgressCompleted?.Invoke(this, eacompleted);
                 }
             }
         }
 
-        private void WebClientWrapper_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private void DownloadProgress(long received, long toReceive, int percentage)
         {
             lock (_progressLock)
             {
-                if (_progressCache.TryGetValue(_processKey, out var info) &&
-                    e.ProgressPercentage - info.ProgressPercentage >= _configurationService.DownloadProgressThrash)
+                if (_progressCache.TryGetValue(_processKey, out var info)
+                    && percentage - info.ProgressPercentage >= _configurationService.DownloadProgressThrash)
                 {
-                    var eainfo = new DownloadProcessInfoEventArgs(e, info);
+                    var eainfo = new DownloadProcessInfoEventArgs(received, toReceive, percentage, info);
                     _progressCache[_processKey] = eainfo.Info;
                     OnDownloadProgressInfoChanged?.Invoke(this, eainfo);
                 }
+            }
+        }
+
+        public async Task DownloadFile(string link, string filename, CancellationToken token)
+        {
+            Exception exception = null;
+
+            try
+            {
+                // Buffer
+                int buffersize = 2 << 14;
+                byte[] buffer = new byte[buffersize];
+
+                // Streams
+                using var readstream = await OpenReadTaskAsync(link);
+                using var writestream = File.OpenWrite(filename);
+
+                // Total received size and to receive
+                long receivedBytes = 0;
+                var totalBytesToReceive = long.Parse(ResponseHeaders["Content-Length"]);
+
+                // Read from link
+                int count = 0;
+                while ((count = await readstream.ReadAsync(buffer, token)) > 0)
+                {
+                    // Cancel
+                    if (token.IsCancellationRequested)
+                        break;
+
+                    // Write to file
+                    await writestream.WriteAsync(buffer, 0, count, token);
+
+                    // Progress
+                    receivedBytes += count;
+                    DownloadProgress(receivedBytes, totalBytesToReceive, 
+                        (int)(receivedBytes / (totalBytesToReceive / 100)));
+                }
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+            finally
+            {
+                // Done
+                DownloadCompleted(exception, token.IsCancellationRequested);
             }
         }
     }

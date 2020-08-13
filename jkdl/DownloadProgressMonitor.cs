@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -9,7 +10,7 @@ namespace jkdl
     {
         private readonly ILogger<DownloadProgressMonitor> _logger;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
-        private readonly IDownloadClientsCache _downloadClientsCache;
+        private readonly IDownloadProgressCache _downloadProgressCache;
         private readonly ITextProvider _textProvider;
         private bool _disposedValue;
         private readonly Timer _progressTimer;
@@ -17,21 +18,21 @@ namespace jkdl
         public DownloadProgressMonitor(ILogger<DownloadProgressMonitor> logger,
             IDownloadProgressProvider downloadProgressProvider,
             IConfigurationService configurationService,
-            IDownloadClientsCache downloadClientsCache,
+            IDownloadProgressCache downloadProgressCache,
             ITextProvider textProvider)
         {
             _logger = logger;
             _downloadProgressProvider = downloadProgressProvider;
-            _downloadClientsCache = downloadClientsCache;
+            _downloadProgressCache = downloadProgressCache;
             _textProvider = textProvider;
 
             _progressTimer = new Timer(TimeSpan.FromSeconds(configurationService.MonitorPeriodInSecond).TotalMilliseconds);
-            _progressTimer.Elapsed += _progressTimer_Elapsed;
+            _progressTimer.Elapsed += ProgressTimer_Elapsed;
         }
 
-        private async void _progressTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private async void ProgressTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!_downloadClientsCache.IsEmpty)
+            if (_downloadProgressCache.Values.Any(i => i.Running))
             {
                 await _downloadProgressProvider.ReportProgress();
                 await _textProvider.Writer.WriteLineAsync();
