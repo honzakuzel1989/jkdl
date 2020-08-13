@@ -16,7 +16,8 @@ namespace jkdl
                 received, 
                 toReceive,
                 percentage,
-                running: true);
+                running: true,
+                info.TokenSource);
         }
     }
 }

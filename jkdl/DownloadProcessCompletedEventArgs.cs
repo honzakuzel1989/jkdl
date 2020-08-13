@@ -19,7 +19,8 @@ namespace jkdl
                 cancelled,
                 ex,
                 completed: true,
-                DateTime.Now);
+                DateTime.Now,
+                info.TokenSource);
         }
     }
 }

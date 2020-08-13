@@ -5,19 +5,18 @@ namespace jkdl
 {
     public class DownloadProcessInfo
     {
-        public DownloadProcessInfo(DateTime start, string guid, string link, string filename)
+        public DownloadProcessInfo(DateTime start, string guid, string link, string filename, CancellationTokenSource cts)
         {
             Key = guid;
             Link = link;
             Filename = filename;
             StartTime = start;
             EndTime = start;
-
-            TokenSource = new CancellationTokenSource();
+            TokenSource = cts;
         }
 
-        public DownloadProcessInfo(DateTime start, string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool running)
-            : this(start, guid, link, filename)
+        public DownloadProcessInfo(DateTime start, string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool running, CancellationTokenSource cts)
+            : this(start, guid, link, filename, cts)
         {
             BytesReceived = bytesReceived;
             TotalBytesToReceive = totalBytesToReceive;
@@ -25,8 +24,8 @@ namespace jkdl
             Running = running;
         }
 
-        public DownloadProcessInfo(DateTime start, string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool cancelled, Exception error, bool completed, DateTime end)
-            : this(start, guid, link, filename, bytesReceived, totalBytesToReceive, progressPercentage, running: false)
+        public DownloadProcessInfo(DateTime start, string guid, string link, string filename, long bytesReceived, long totalBytesToReceive, int progressPercentage, bool cancelled, Exception error, bool completed, DateTime end, CancellationTokenSource cts)
+            : this(start, guid, link, filename, bytesReceived, totalBytesToReceive, progressPercentage, running: false, cts)
         {
             Completed = completed;
             Cancelled = cancelled;

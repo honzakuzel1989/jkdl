@@ -76,22 +76,23 @@ namespace jkdl
                 int count = 0;
                 while ((count = await readstream.ReadAsync(buffer, token)) > 0)
                 {
-                    // Cancel
-                    if (token.IsCancellationRequested)
-                        break;
-
                     // Write to file
                     await writestream.WriteAsync(buffer, 0, count, token);
 
                     // Progress
                     receivedBytes += count;
-                    DownloadProgress(receivedBytes, totalBytesToReceive, 
+                    DownloadProgress(receivedBytes, totalBytesToReceive,
                         (int)(receivedBytes / (totalBytesToReceive / 100)));
                 }
+            }
+            catch (OperationCanceledException)
+            { 
+                // Empty
             }
             catch (Exception ex)
             {
                 exception = ex;
+                throw;
             }
             finally
             {
