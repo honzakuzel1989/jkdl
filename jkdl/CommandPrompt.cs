@@ -66,11 +66,20 @@ namespace jkdl
                     case "history":
                         await _downloadProgressProvider.ReportHistory();
                         break;
-                    case "monitor start":
-                        _downloadProgressMonitor.StartMonitor();
-                        break;
-                    case "monitor stop":
-                        _downloadProgressMonitor.StopMonitor();
+                    case "monitor":
+                        var mcommand = Reader.ReadLine();
+                        switch (mcommand)
+                        {
+                            case "start":
+                                _downloadProgressMonitor.StartMonitor();
+                                break;
+                            case "stop":
+                                _downloadProgressMonitor.StopMonitor();
+                                break;
+                            default:
+                                Writer.WriteLine("Unknown command. Type \"help\" for available commands.");
+                                break;
+                        }
                         break;
                     case "help":
                         PrintHelp();
@@ -99,8 +108,10 @@ namespace jkdl
             Writer.WriteLine($"\tprogress - print download progress");
             Writer.WriteLine($"\tstats - print download statistics");
             Writer.WriteLine($"\thistory - print download history");
-            Writer.WriteLine($"\tmonitor start - start monitor download history");
-            Writer.WriteLine($"\tmonitor stop - start monitor download history");
+            Writer.WriteLine($"\tmonitor - [start] or [stop] monitor download history");
+            Writer.WriteLine($"\t\tstart - start monitor download history");
+            Writer.WriteLine($"\t\tstop - stop monitor download history");
+            Writer.WriteLine($"\tcancel - cancel download by download identification");
             Writer.WriteLine($"\texit - exit the application");
             Writer.WriteLine($"\thelp - exit the application");
         }
