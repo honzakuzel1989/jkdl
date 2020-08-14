@@ -37,6 +37,10 @@ namespace jkdl
                 await _downloadProgressProvider.ReportProgress();
                 await _textProvider.Writer.WriteLineAsync();
             }
+            else
+            {
+                await _downloadProgressProvider.ReportProgress();
+            }
         }
 
         public void StartMonitor()
