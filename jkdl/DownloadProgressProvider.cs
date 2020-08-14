@@ -49,7 +49,7 @@ namespace jkdl
                         $"\n\t{info.ProgressPercentage} [%] ({duration})" +
                         $"\n\t{mbreceived}/{mbtotal} [{MB}]" +
                         $"\n\t{mbspeed} [{MB}/s]" +
-                        $"\n\t{(double.IsNaN(mbspeed) ? double.NaN.ToString() : TimeSpan.FromSeconds(estimatedtime).ToString())}");
+                        $"\n\t{(double.IsNaN(mbspeed) ? double.NaN.ToString() : TimeSpan.FromSeconds((int)estimatedtime).ToString())}");
 
                     cacheWasEmpty = false;
                 }
