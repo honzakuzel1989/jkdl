@@ -2,7 +2,7 @@
   "profiles": {
     "jkdl": {
       "commandName": "Project",
-      "commandLineArgs": "--help"
+      "commandLineArgs": ""
     }
   }
 }

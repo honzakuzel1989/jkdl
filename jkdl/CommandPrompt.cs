@@ -105,17 +105,15 @@ namespace jkdl
         private void PrintAvailableCommands()
         {
             Writer.WriteLine("Available commands:");
-            Writer.WriteLine($"\tlink - insert link into the cache to download");
-            Writer.WriteLine($"\tfile - insert filename with links into the cache to download");
-            Writer.WriteLine($"\tprogress - print download progress");
-            Writer.WriteLine($"\tstats - print download statistics");
-            Writer.WriteLine($"\thistory - print download history");
-            Writer.WriteLine($"\tmonitor - [start] or [stop] monitor download history");
-            Writer.WriteLine($"\t\tstart - start monitor download history");
-            Writer.WriteLine($"\t\tstop - stop monitor download history");
-            Writer.WriteLine($"\tcancel - cancel download by download identification");
-            Writer.WriteLine($"\texit - exit the application");
-            Writer.WriteLine($"\thelp - exit the application");
+            Writer.WriteLine($"  link\t\tinsert link into the cache to download");
+            Writer.WriteLine($"  file\t\tinsert filename with links into the cache to download");
+            Writer.WriteLine($"  progress\tprint download progress");
+            Writer.WriteLine($"  stats\t\tprint download statistics");
+            Writer.WriteLine($"  history\tprint download history");
+            Writer.WriteLine($"  monitor\t[start] or [stop] monitor download history");
+            Writer.WriteLine($"  cancel\tcancel download by download identification");
+            Writer.WriteLine($"  exit\t\texit the application");
+            Writer.WriteLine($"  help\t\tshow this help message");
         }
     }
 }

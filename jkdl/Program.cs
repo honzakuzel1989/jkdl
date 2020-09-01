@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,7 +21,11 @@ namespace jkdl
                 var arguments = new ArgumentsWrapper(args);
                 var configuration = new ConfigurationService(arguments);
 
-                if (configuration.Options is null) Environment.Exit(42);
+                if (configuration.Options is null)
+                {
+                    WaitForReturn();
+                    Exit();
+                }
 
                 var provider = new ServiceCollectionWrapper(configuration);
 
@@ -30,11 +35,7 @@ namespace jkdl
 
                     await provider.ComandPrompt.Run(cts);
 
-                    if (Debugger.IsAttached)
-                    {
-                        Console.Out.WriteLine("Press [Enter] to exit...");
-                        Console.In.ReadLine();
-                    }
+                    WaitForReturn();
                 }
                 else
                 {
@@ -45,6 +46,22 @@ namespace jkdl
             {
                 Console.Error.WriteLine(ex.ToString());
             }
+        }
+
+        [DoesNotReturn]
+        private static void WaitForReturn()
+        {
+            if (Debugger.IsAttached)
+            {
+                Console.Out.WriteLine("Press [Enter] to exit...");
+                Console.In.ReadLine();
+            }
+        }
+
+        [DoesNotReturn]
+        private static void Exit()
+        {
+            Environment.Exit(42);
         }
     }
 }
