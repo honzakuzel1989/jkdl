@@ -36,7 +36,7 @@ namespace jkdl
             {
                 _logger.LogInformation($"Downloading data from link: {info.Link} to {info.Filename}...");
 
-                if (!File.Exists(info.Filename) || (File.Exists(info.Filename) && _configuration.OverwriteResult))
+                if (!File.Exists(info.Filename) || (File.Exists(info.Filename) && _configuration.OverwriteResults))
                 {
                     using var client = _webClientFactory.CreateWebClient(info);
                     await client.DownloadFile(info.Link, info.Filename, info.TokenSource.Token);

@@ -5,7 +5,7 @@
         int MonitorPeriodInSecond { get; }
         bool Interactive { get; }
         int MaxNumberOfDownload { get; }
-        bool OverwriteResult { get; }
+        bool OverwriteResults { get; }
         string DownloadLocation { get; }
         int DownloadProgressThrash { get; }
     }

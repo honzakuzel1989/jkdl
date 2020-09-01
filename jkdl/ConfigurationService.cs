@@ -7,7 +7,7 @@
         }
 
         public bool Interactive => true;
-        public bool OverwriteResult => true;
+        public bool OverwriteResults => true;
         public int MaxNumberOfDownload => 3;
         public string DownloadLocation => ".";
         public int DownloadProgressThrash => 1;
