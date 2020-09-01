@@ -3,7 +3,7 @@
     public interface IConfigurationOptions
     {
         int MonitorPeriodInSecond { get; }
-        bool Interactive { get; }
+        bool Background { get; }
         int MaxNumberOfDownload { get; }
         bool OverwriteResults { get; }
         string DownloadLocation { get; }

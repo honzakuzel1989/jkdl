@@ -24,7 +24,7 @@ namespace jkdl
 
                 var provider = new ServiceCollectionWrapper(configuration);
 
-                if (configuration.Options.Interactive)
+                if (!configuration.Options.Background)
                 {
                     _ = Task.Run(async () => await provider.Downloader.Run(cts.Token));
 

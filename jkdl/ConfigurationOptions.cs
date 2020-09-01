@@ -4,8 +4,8 @@ namespace jkdl
 {
     internal class ConfigurationOptions : IConfigurationOptions
     {
-        [Option('i', "interactive", Required = false, HelpText = "Start in interactive mode.", Default = true)]
-        public bool Interactive { get; set; }
+        [Option('b', "background", Required = false, HelpText = "Start in background mode.", Default = false)]
+        public bool Background { get; set; }
         [Option('o', "overwride", Required = false, HelpText = "Overwrite file in same name on download location.", Default = false)]
         public bool OverwriteResults { get; set; }
         [Option('m', "max", Required = false, HelpText = "Max number of concurrent download.", Default = 3)]
