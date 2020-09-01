@@ -14,6 +14,8 @@ namespace jkdl
             services.AddLogging(l => l.AddDebug());
 
             services.AddSingleton<IConfigurationService>(config);
+            services.AddSingleton<IConfigurationOptions>(config.Options);
+
             services.AddSingleton<IDownloadProgressCache, DownloadProgressCache>();
             services.AddSingleton<ILinksCache, LinksCache>();
             services.AddSingleton<ICommandPrompt, CommandPrompt>();

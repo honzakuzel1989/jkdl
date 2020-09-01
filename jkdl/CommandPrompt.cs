@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +14,7 @@ namespace jkdl
         private readonly IDownloadProgressProvider _downloadProgressProvider;
         private readonly IDownloadProgressMonitor _downloadProgressMonitor;
         private readonly ITextProvider _textProvider;
+        private readonly IConfigurationService _configurationService;
 
         private TextReader Reader => _textProvider.Reader;
         private TextWriter Writer => _textProvider.Writer;
@@ -25,7 +25,8 @@ namespace jkdl
             IFileDownloader fileDownloader,
             IDownloadProgressProvider downloadProgressProvider,
             IDownloadProgressMonitor downloadProgressMonitor,
-            ITextProvider textProvider)
+            ITextProvider textProvider,
+            IConfigurationService configurationService)
         {
             _logger = logger;
             _linksCache = linksCache;
@@ -34,6 +35,7 @@ namespace jkdl
             _downloadProgressProvider = downloadProgressProvider;
             _downloadProgressMonitor = downloadProgressMonitor;
             _textProvider = textProvider;
+            _configurationService = configurationService;
         }
 
         public async Task Run(CancellationTokenSource cts)

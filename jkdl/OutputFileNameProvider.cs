@@ -6,10 +6,10 @@ namespace jkdl
     internal class OutputFileNameProvider : IOutputFileNameProvider
     {
         private readonly ILogger<OutputFileNameProvider> _logger;
-        private readonly IConfigurationService _configurationService;
+        private readonly IConfigurationOptions _configurationService;
 
         public OutputFileNameProvider(ILogger<OutputFileNameProvider> logger, 
-            IConfigurationService configurationService)
+            IConfigurationOptions configurationService)
         {
             _logger = logger;
             _configurationService = configurationService;

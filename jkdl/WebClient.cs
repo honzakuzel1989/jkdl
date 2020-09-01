@@ -15,11 +15,11 @@ namespace jkdl
         private readonly string _processKey;
 
         private readonly IDownloadProgressCache _progressCache;
-        private readonly IConfigurationService _configurationService;
+        private readonly IConfigurationOptions _configurationService;
 
         public WebClient(string processKey,
             IDownloadProgressCache progressCache,
-            IConfigurationService configurationService)
+            IConfigurationOptions configurationService)
         {
             _processKey = processKey;
 

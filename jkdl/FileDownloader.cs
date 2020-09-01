@@ -10,14 +10,14 @@ namespace jkdl
     {
         private readonly ILogger<FileDownloader> _logger;
         private readonly IWebClientFactory _webClientFactory;
-        private readonly IConfigurationService _configuration;
+        private readonly IConfigurationOptions _configuration;
         private readonly ILinksCache _linksCache;
         private readonly IDownloadProgressCache _downloadProgressCache;
         private readonly INotificationService _notificationService;
 
         public FileDownloader(ILogger<FileDownloader> logger,
             IWebClientFactory webClientFactory,
-            IConfigurationService configuration,
+            IConfigurationOptions configuration,
             ILinksCache linksCache,
             IDownloadProgressCache downloadProgressCache,
             INotificationService notificationService)

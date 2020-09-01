@@ -1,16 +1,15 @@
-﻿namespace jkdl
+﻿using CommandLine;
+
+namespace jkdl
 {
     internal class ConfigurationService : IConfigurationService
     {
-        public ConfigurationService(string[] args)
-        {
-        }
+        public IConfigurationOptions Options { get; private set; }
 
-        public bool Interactive => true;
-        public bool OverwriteResults => true;
-        public int MaxNumberOfDownload => 3;
-        public string DownloadLocation => ".";
-        public int DownloadPercentageThrash => 1;
-        public int MonitorPeriodInSecond => 1;
+        public ConfigurationService(IArgumentsWrapper argumentsWrapper)
+        {
+            Parser.Default.ParseArguments<ConfigurationOptions>(argumentsWrapper.Arguments)
+                .WithParsed(opts => Options = opts);
+        }
     }
 }

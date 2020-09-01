@@ -12,7 +12,7 @@ namespace jkdl
 
         private readonly ILogger<DownloadProgressProvider> _logger;
         private readonly IDownloadProgressCache _downloadProgressCache;
-        private readonly IConfigurationService _configurationService;
+        private readonly IConfigurationOptions _configurationService;
         private readonly ITextProvider _textProvider;
 
         private TextWriter Writer => _textProvider.Writer;
@@ -20,7 +20,7 @@ namespace jkdl
 
         public DownloadProgressProvider(ILogger<DownloadProgressProvider> logger,
             IDownloadProgressCache downloadProgressCache,
-            IConfigurationService configurationService,
+            IConfigurationOptions configurationService,
             ITextProvider textProvider)
         {
             _logger = logger;

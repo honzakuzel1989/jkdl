@@ -17,7 +17,7 @@ namespace jkdl
 
         public DownloadProgressMonitor(ILogger<DownloadProgressMonitor> logger,
             IDownloadProgressProvider downloadProgressProvider,
-            IConfigurationService configurationService,
+            IConfigurationOptions configurationService,
             IDownloadProgressCache downloadProgressCache,
             ITextProvider textProvider)
         {

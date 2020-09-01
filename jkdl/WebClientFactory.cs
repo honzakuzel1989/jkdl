@@ -10,11 +10,11 @@ namespace jkdl
 
         private readonly ILogger<WebClientFactory> _logger;
         private readonly IDownloadProgressCache _downloadProgressCache;
-        private readonly IConfigurationService _configurationService;
+        private readonly IConfigurationOptions _configurationService;
 
         public WebClientFactory(ILogger<WebClientFactory> logger, 
             IDownloadProgressCache downloadProgressCache,
-            IConfigurationService configurationService)
+            IConfigurationOptions configurationService)
         {
             _logger = logger;
             _downloadProgressCache = downloadProgressCache;

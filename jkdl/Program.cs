@@ -17,10 +17,14 @@ namespace jkdl
             {
                 var cts = new CancellationTokenSource();
 
-                var config = new ConfigurationService(args);
-                var provider = new ServiceCollectionWrapper(config);
+                var arguments = new ArgumentsWrapper(args);
+                var configuration = new ConfigurationService(arguments);
 
-                if (config.Interactive)
+                if (configuration.Options is null) Environment.Exit(42);
+
+                var provider = new ServiceCollectionWrapper(configuration);
+
+                if (configuration.Options.Interactive)
                 {
                     _ = Task.Run(async () => await provider.Downloader.Run(cts.Token));
 
