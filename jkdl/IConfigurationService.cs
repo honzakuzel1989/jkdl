@@ -7,6 +7,6 @@
         int MaxNumberOfDownload { get; }
         bool OverwriteResults { get; }
         string DownloadLocation { get; }
-        int DownloadProgressThrash { get; }
+        int DownloadPercentageThrash { get; }
     }
 }

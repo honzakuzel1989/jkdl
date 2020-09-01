@@ -45,7 +45,7 @@ namespace jkdl
             lock (_progressLock)
             {
                 if (_progressCache.TryGetValue(_processKey, out var info)
-                    && percentage - info.ProgressPercentage >= _configurationService.DownloadProgressThrash)
+                    && percentage - info.ProgressPercentage >= _configurationService.DownloadPercentageThrash)
                 {
                     var eainfo = new DownloadProcessInfoEventArgs(received, toReceive, percentage, info);
                     _progressCache[_processKey] = eainfo.Info;

@@ -10,7 +10,7 @@
         public bool OverwriteResults => true;
         public int MaxNumberOfDownload => 3;
         public string DownloadLocation => ".";
-        public int DownloadProgressThrash => 1;
+        public int DownloadPercentageThrash => 1;
         public int MonitorPeriodInSecond => 1;
     }
 }
