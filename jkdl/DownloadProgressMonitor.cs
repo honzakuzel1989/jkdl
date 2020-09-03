@@ -8,6 +8,8 @@ namespace jkdl
 {
     class DownloadProgressMonitor : IDownloadProgressMonitor
     {
+        private volatile bool wasAnyDownloadIsRunning = false;
+
         private readonly ILogger<DownloadProgressMonitor> _logger;
         private readonly IDownloadProgressProvider _downloadProgressProvider;
         private readonly IDownloadProgressCache _downloadProgressCache;
@@ -34,11 +36,15 @@ namespace jkdl
         {
             if (_downloadProgressCache.Values.Any(i => i.Running))
             {
+                wasAnyDownloadIsRunning = true;
+
                 await _downloadProgressProvider.ReportProgress();
                 await _textProvider.Writer.WriteLineAsync();
             }
-            else
+            else if(wasAnyDownloadIsRunning)
             {
+                wasAnyDownloadIsRunning = false;
+
                 await _downloadProgressProvider.ReportProgress();
             }
         }
