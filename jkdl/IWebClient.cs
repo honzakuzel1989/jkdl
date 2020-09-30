@@ -9,6 +9,6 @@ namespace jkdl
         event EventHandler<DownloadProcessInfoEventArgs> OnDownloadProgressInfoChanged;
         event EventHandler<DownloadProcessCompletedEventArgs> OnDownloadProgressCompleted;
 
-        Task DownloadFile(string link, string filename, CancellationToken token);
+        Task DownloadFile(string key, string link, string filename, CancellationToken token);
     }
 }

@@ -29,7 +29,7 @@ namespace jkdl
                 return data.WebClient;
 
             // New client
-            var newclient = new WebClient(info.Key, _downloadProgressCache, _configurationService);
+            var newclient = new WebClient(_downloadProgressCache, _configurationService);
             _webClientsData.Add(new WebClientData { WebClient = newclient, Info = info });
 
             // Max is _configurationService.MaxNumberOfDownload

@@ -39,7 +39,7 @@ namespace jkdl
                 if (!File.Exists(info.Filename) || (File.Exists(info.Filename) && _configuration.OverwriteResults))
                 {
                     using var client = _webClientFactory.CreateWebClient(info);
-                    await client.DownloadFile(info.Link, info.Filename, info.TokenSource.Token);
+                    await client.DownloadFile(info.Key, info.Link, info.Filename, info.TokenSource.Token);
 
                     _logger.LogInformation($"File {info.Filename} successfully downloaded");
                 }

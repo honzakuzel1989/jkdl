@@ -12,17 +12,12 @@ namespace jkdl
 
         private readonly object _progressLock = new object();
 
-        private readonly string _processKey;
-
         private readonly IDownloadProgressCache _progressCache;
         private readonly IConfigurationOptions _configurationService;
 
-        public WebClient(string processKey,
-            IDownloadProgressCache progressCache,
+        public WebClient(IDownloadProgressCache progressCache,
             IConfigurationOptions configurationService)
         {
-            _processKey = processKey;
-
             _progressCache = progressCache;
             _configurationService = configurationService;
 
@@ -30,34 +25,34 @@ namespace jkdl
                 Credentials = new System.Net.NetworkCredential(_configurationService.User, _configurationService.Password);
         }
 
-        private void DownloadCompleted(Exception exception, bool cancelled)
+        private void DownloadCompleted(string key, Exception exception, bool cancelled)
         {
             lock (_progressLock)
             {
-                if (_progressCache.TryGetValue(_processKey, out var info))
+                if (_progressCache.TryGetValue(key, out var info))
                 {
                     var eacompleted = new DownloadProcessCompletedEventArgs(exception, cancelled, info);
-                    _progressCache[_processKey] = eacompleted.Info;
+                    _progressCache[key] = eacompleted.Info;
                     OnDownloadProgressCompleted?.Invoke(this, eacompleted);
                 }
             }
         }
 
-        private void DownloadProgress(long received, long toReceive, int percentage)
+        private void DownloadProgress(string key, long received, long toReceive, int percentage)
         {
             lock (_progressLock)
             {
-                if (_progressCache.TryGetValue(_processKey, out var info)
+                if (_progressCache.TryGetValue(key, out var info)
                     && percentage - info.ProgressPercentage >= _configurationService.DownloadPercentageThrash)
                 {
                     var eainfo = new DownloadProcessInfoEventArgs(received, toReceive, percentage, info);
-                    _progressCache[_processKey] = eainfo.Info;
+                    _progressCache[key] = eainfo.Info;
                     OnDownloadProgressInfoChanged?.Invoke(this, eainfo);
                 }
             }
         }
 
-        public async Task DownloadFile(string link, string filename, CancellationToken token)
+        public async Task DownloadFile(string key, string link, string filename, CancellationToken token)
         {
             Exception exception = null;
 
@@ -84,7 +79,7 @@ namespace jkdl
 
                     // Progress
                     receivedBytes += count;
-                    DownloadProgress(receivedBytes, totalBytesToReceive,
+                    DownloadProgress(key, receivedBytes, totalBytesToReceive,
                         (int)(receivedBytes / (totalBytesToReceive / 100)));
                 }
             }
@@ -100,7 +95,7 @@ namespace jkdl
             finally
             {
                 // Done
-                DownloadCompleted(exception, token.IsCancellationRequested);
+                DownloadCompleted(key, exception, token.IsCancellationRequested);
             }
         }
     }

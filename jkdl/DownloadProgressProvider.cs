@@ -44,7 +44,7 @@ namespace jkdl
                     var estimatedtime = mbspeed > 0 ? ((mbtotal - mbreceived) / mbspeed) : double.NaN;
 
                     await Writer.WriteLineAsync($"" +
-                        $"\t[{info.Key}]" +
+                        $"\t== [{info.Key}]" +
                         $"\n\t{info.Filename}{(!info.Running ? " - waiting" : string.Empty)}" +
                         $"\n\t{info.ProgressPercentage} [%] ({duration})" +
                         $"\n\t{mbreceived}/{mbtotal} [{MB}]" +
