@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -23,12 +24,18 @@ namespace jkdl
 
         public IWebClient CreateWebClient(DownloadProcessInfo info)
         {
-            if (_webClientsData.FirstOrDefault(wc => wc.Info.Running) is IWebClient client)
-                return client;
+            // Get first not running client
+            if (_webClientsData.FirstOrDefault(wc => !wc.Info.Running) is WebClientData data)
+                return data.WebClient;
 
-            // Max is _configurationService.MaxNumberOfDownload
+            // New client
             var newclient = new WebClient(info.Key, _downloadProgressCache, _configurationService);
             _webClientsData.Add(new WebClientData { WebClient = newclient, Info = info });
+
+            // Max is _configurationService.MaxNumberOfDownload
+            if (_webClientsData.Count > _configurationService.MaxNumberOfDownload)
+                throw new InvalidOperationException($"Create web client: unexpected number of web clients " +
+                    $"(current: {_webClientsData.Count}, max: '{_configurationService.MaxNumberOfDownload}').");
 
             return newclient;
         }

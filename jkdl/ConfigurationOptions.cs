@@ -16,5 +16,9 @@ namespace jkdl
         public int DownloadPercentageThrash { get; set; }
         [Option('p', "period", Required = false, HelpText = "Monitor refresh period in second.", Default = 1)]
         public int MonitorPeriodInSecond { get; set; }
+        [Option("user", Required = false, HelpText = "User name provided to client credentials.")]
+        public string User { get; set; }
+        [Option("password", Required = false, HelpText = "Password provided to client credentials.")]
+        public string Password { get; set; }
     }
 }

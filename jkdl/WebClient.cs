@@ -25,6 +25,9 @@ namespace jkdl
 
             _progressCache = progressCache;
             _configurationService = configurationService;
+
+            if (!string.IsNullOrEmpty(_configurationService.User) && !string.IsNullOrEmpty(_configurationService.Password))
+                Credentials = new System.Net.NetworkCredential(_configurationService.User, _configurationService.Password);
         }
 
         private void DownloadCompleted(Exception exception, bool cancelled)
@@ -86,7 +89,7 @@ namespace jkdl
                 }
             }
             catch (OperationCanceledException)
-            { 
+            {
                 // Empty
             }
             catch (Exception ex)
