@@ -27,6 +27,10 @@ namespace jkdl
             else filename = tlink.Substring(si + 1);
 
             _logger.LogInformation($"\t\t{filename}");
+            _logger.LogInformation($"\t\t{_configurationService.DownloadLocation}");
+
+            if (!Directory.Exists(_configurationService.DownloadLocation))
+                Directory.CreateDirectory(_configurationService.DownloadLocation);
 
             string filepath = Path.Combine(_configurationService.DownloadLocation, filename);
             _logger.LogInformation($"\t\t{filepath}");
